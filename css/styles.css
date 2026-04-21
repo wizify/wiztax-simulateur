@@ -4,9 +4,9 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bleu:       #3340FA;
-  --bleu-light: #5563fb;
-  --bleu-pale:  #eaebff;
+  --bleu:       #1E3A5F;
+  --bleu-light: #2E5E9B;
+  --bleu-pale:  #EBF2FB;
   --orange:     #e07b2a;
   --orange-pale:#fef0e0;
   --vert:       #2e7d52;
@@ -101,8 +101,8 @@ header span { font-size: .85rem; opacity: .7; }
   content: attr(data-tip);
   position: absolute;
   bottom: calc(100% + 8px);
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;              /* ancré au bord gauche de l'icône → s'ouvre vers la droite */
+  transform: none;
   background: #1a1a2e;
   color: #fff;
   padding: 8px 12px;
@@ -112,7 +112,7 @@ header span { font-size: .85rem; opacity: .7; }
   font-style: normal;
   white-space: pre-line;
   width: max-content;
-  max-width: 280px;
+  max-width: 300px;
   line-height: 1.5;
   opacity: 0;
   pointer-events: none;
@@ -124,8 +124,8 @@ header span { font-size: .85rem; opacity: .7; }
   content: '';
   position: absolute;
   bottom: calc(100% + 2px);
-  left: 50%;
-  transform: translateX(-50%);
+  left: 5px;
+  transform: none;
   border: 5px solid transparent;
   border-top-color: #1a1a2e;
   opacity: 0;
@@ -135,12 +135,9 @@ header span { font-size: .85rem; opacity: .7; }
 .tip:hover::after,
 .tip:hover::before { opacity: 1; }
 
-/* Tooltip qui s'ouvre vers le bas (quand on est en haut de page) */
+/* Tooltip qui s'ouvre vers le bas */
 .tip.tip-down::after  { top: calc(100% + 8px); bottom: auto; }
 .tip.tip-down::before { top: calc(100% + 2px); bottom: auto; border-top-color: transparent; border-bottom-color: #1a1a2e; }
-
-/* Tooltip aligné à gauche */
-.tip.tip-left::after { left: 0; transform: none; }
 
 /* ─────────────────────────────────────────────
    LAYOUT SIMULATEUR

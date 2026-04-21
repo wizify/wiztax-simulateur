@@ -1,0 +1,44 @@
+# WizTax — Simulateur IR
+
+## Contexte
+Simulateur d'impôt sur le revenu français (revenus 2025, déclaration 2026).
+Page web statique en HTML/CSS/JS vanilla, hébergée sur GitHub Pages.
+Destinée à être intégrée dans un vrai logiciel par un développeur.
+
+**Priorité absolue : justesse des calculs, traçabilité, pas l'UI.**
+
+## Liens
+- GitHub : https://github.com/wizify/wiztax-simulateur
+- GitHub Pages : https://wizify.github.io/wiztax-simulateur/
+- Google Sheet original : https://docs.google.com/spreadsheets/d/1_0rPgviPknM7q37ouvSVIbcXNTeHo__Ys8-4EtG0Wfs/edit
+
+## Structure
+- `js/params.js` — tous les paramètres fiscaux (ne pas modifier sans source officielle)
+- `js/calculator.js` — moteur de calcul pur (étapes 1 à 11), pas de DOM ici
+- `js/app.js` — lecture des inputs, affichage des résultats, navigation onglets
+- `css/styles.css` — mise en forme
+- `index.html` — structure HTML complète avec les 3 onglets
+
+## Paramètres fiscaux vérifiés (sources officielles)
+- Barème : 11 600 / 29 579 / 84 577 / 181 917 à 0% / 11% / 30% / 41% / 45%
+  Source : BOI-IR-LIQ-20-10 du 07/04/2026
+- QF plafond : 1 807 €/demi-part, parent isolé 1er enfant 4 262 €
+  Source : BOI-IR-LIQ-20-20-20 du 07/04/2026
+- Décote : célibataire 897 € (seuil 1 982 €), couple 1 483 € (seuil 3 277 €), taux 45,25 %
+  Source : BOI-IR-LIQ-20-20-30 du 07/04/2026
+- PS : 18,6 % mobilier (dividendes/PV), 17,2 % foncier — Source : LFSS 2026 art. 12
+- PFU : 12,8 % IR + 18,6 % PS = 31,4 % total
+- Niches : 10 000 € général, 18 000 € majoré (Girardin/Sofica)
+- Girardin plein droit : 44 % dans le plafond (rétrocession 56%) — art. 200-0 A, 4° CGI
+- Girardin avec agrément : 34 % dans le plafond (rétrocession 66%) — art. 200-0 A, 4° CGI
+
+## Règles importantes
+- Ne jamais modifier un paramètre fiscal sans vérifier sur BOFiP ou brochure IR officielle
+- Les abattements salaires/BNC/pensions ont des gardes si le revenu = 0 (évite les négatifs)
+- Le Google Sheet (SimulateurIR_v2.gs) et cette page doivent rester cohérents
+
+## Workflow Git
+- Branche : main
+- Remote : git@github.com:wizify/wiztax-simulateur.git
+- SSH configuré (clé ~/.ssh/github_wizify)
+- Après chaque modif : `git add . && git commit -m "..." && git push`

@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WizTax — Simulateur IR 2025</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<header>
+  <h1>WizTax — Simulateur d'impôt sur le revenu</h1>
+  <span>Revenus 2025 · Déclaration 2026</span>
+</header>
+
+<nav class="tabs-nav">
+  <button class="tab-btn active" data-tab="simulateur">Simulateur</button>
+  <button class="tab-btn" data-tab="calcul">Calcul détaillé</button>
+  <button class="tab-btn" data-tab="parametres">Paramètres fiscaux</button>
+</nav>
+
+<!-- ══════════════════════════════════════════════
+     ONGLET 1 : SIMULATEUR
+═══════════════════════════════════════════════ -->
+<div id="simulateur" class="tab-pane active">
+  <div class="sim-layout">
+
+    <!-- Colonne gauche : saisies -->
+    <div class="inputs-col">
+
+      <!-- A — SITUATION PERSONNELLE -->
+      <div class="section-card">
+        <h2>A — Situation personnelle</h2>
+        <div class="form-grid">
+
+          <div class="form-row">
+            <label for="situation">Situation familiale</label>
+            <select id="situation">
+              <option value="celibataire">Célibataire</option>
+              <option value="marie-pacse">Marié / Pacsé</option>
+              <option value="veuf">Veuf(ve)</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <label for="nbEnfants">Enfants à charge</label>
+            <input type="number" id="nbEnfants" value="0" min="0" step="1">
+          </div>
+
+          <div class="form-row">
+            <label for="gardeAlternee">Enfants en garde alternée</label>
+            <input type="number" id="gardeAlternee" value="0" min="0" step="1">
+          </div>
+
+          <div class="form-row">
+            <label for="parentIsole">Parent isolé (case T)</label>
+            <select id="parentIsole">
+              <option value="non">Non</option>
+              <option value="oui">Oui</option>
+            </select>
+          </div>
+
+          <div class="form-row computed">
+            <label>→ Nombre de parts fiscales</label>
+            <div class="computed-val" id="parts-affichage">1.00 parts</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- B — REVENUS -->
+      <div class="section-card">
+        <h2>B — Revenus</h2>
+        <div class="form-grid">
+          <div class="form-row">
+            <label></label>
+            <div class="col-header">Déclarant 1</div>
+            <div class="col-header">Déclarant 2</div>
+          </div>
+          <div class="form-row">
+            <label for="sal1">Salaires nets imposables</label>
+            <input type="number" id="sal1" value="0" min="0">
+            <input type="number" id="sal2" value="0" min="0">
+          </div>
+          <div class="form-row">
+            <label for="pen1">Pensions / retraites</label>
+            <input type="number" id="pen1" value="0" min="0">
+            <input type="number" id="pen2" value="0" min="0">
+          </div>
+          <div class="form-row">
+            <label for="bncMicro1">BNC micro (chiffre d'affaires brut)</label>
+            <input type="number" id="bncMicro1" value="0" min="0">
+            <input type="number" id="bncMicro2" value="0" min="0">
+          </div>
+          <div class="form-row">
+            <label for="bncReel1">BNC réel (bénéfice net)</label>
+            <input type="number" id="bncReel1" value="0" min="0">
+            <input type="number" id="bncReel2" value="0" min="0">
+          </div>
+          <div class="form-row">
+            <label for="microFoncier">Revenus fonciers bruts (micro-foncier)</label>
+            <input type="number" id="microFoncier" value="0" min="0">
+          </div>
+          <div class="form-row">
+            <label for="foncierReel">Revenus fonciers nets (régime réel)</label>
+            <input type="number" id="foncierReel" value="0" min="0">
+          </div>
+          <div class="form-row">
+            <label for="meubleClasse">Location meublée classée micro-BIC</label>
+            <input type="number" id="meubleClasse" value="0" min="0">
+          </div>
+          <div class="form-row">
+            <label for="meubleNonClasse">Location meublée non classée micro-BIC</label>
+            <input type="number" id="meubleNonClasse" value="0" min="0">
+          </div>
+          <div class="form-row">
+            <label for="dividendes">Dividendes bruts</label>
+            <input type="number" id="dividendes" value="0" min="0">
+          </div>
+          <div class="form-row">
+            <label for="pv">Plus-values mobilières nettes</label>
+            <input type="number" id="pv" value="0" min="0">
+          </div>
+          <div class="form-row">
+            <label for="autresRevenus">Autres revenus imposables</label>
+            <input type="number" id="autresRevenus" value="0" min="0">
+          </div>
+          <div class="form-row">
+            <label for="optionPFU">Option dividendes / PV</label>
+            <select id="optionPFU">
+              <option value="pfu">PFU (flat tax 30%)</option>
+              <option value="bareme">Barème progressif</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- C — CHARGES DÉDUCTIBLES -->
+      <div class="section-card">
+        <h2>C — Charges déductibles du revenu</h2>
+        <div class="form-grid">
+          <div class="form-row">
+            <label for="per">Versements PER (part déductible)</label>
+            <input type="number" id="per" value="0" min="0">
+          </div>
+          <div class="form-row">
+            <label for="pensionsAlim">Pensions alimentaires versées</label>
+            <input type="number" id="pensionsAlim" value="0" min="0">
+          </div>
+          <div class="form-row">
+            <label for="csgDeductible">CSG déductible</label>
+            <input type="number" id="csgDeductible" value="0" min="0">
+          </div>
+          <div class="form-row">
+            <label for="autresCharges">Autres charges déductibles</label>
+            <input type="number" id="autresCharges" value="0" min="0">
+          </div>
+        </div>
+      </div>
+
+      <!-- D — RÉDUCTIONS ET CRÉDITS -->
+      <div class="section-card">
+        <h2>D — Réductions et crédits d'impôt</h2>
+        <div class="form-grid">
+          <div class="form-row">
+            <label></label>
+            <div class="col-header">Montant</div>
+            <div class="col-header">Niche fiscale</div>
+          </div>
+
+          <div class="form-row">
+            <label for="dons">Dons aux œuvres (75% ≤ 2 000 € puis 66 %)</label>
+            <input type="number" id="dons" value="0" min="0">
+            <div class="niche-cell">
+              <span class="niche-marker niche-hors">HORS NICHE</span>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <label for="emploiDomicile">Emploi salarié à domicile</label>
+            <input type="number" id="emploiDomicile" value="0" min="0">
+            <div class="niche-cell">
+              <span class="niche-marker niche-10k">NICHE 10k</span>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <label for="gardeEnfants">Frais de garde enfants &lt; 6 ans</label>
+            <input type="number" id="gardeEnfants" value="0" min="0">
+            <div class="niche-cell">
+              <span class="niche-marker niche-10k">NICHE 10k</span>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <label for="pinel">Investissement Pinel / Denormandie</label>
+            <input type="number" id="pinel" value="0" min="0">
+            <div class="niche-cell">
+              <span class="niche-marker niche-10k">NICHE 10k</span>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <label for="girardinPD">
+              Girardin plein droit — réduction (attestation)
+              <small style="display:block;color:#888;font-size:.75rem">Rétrocession 56% · seuls 44% dans le plafond</small>
+            </label>
+            <input type="number" id="girardinPD" value="0" min="0">
+            <div class="niche-cell">
+              <span class="niche-marker niche-18k-44">NICHE 18k</span>
+              <span class="niche-marker niche-18k-44">44 %</span>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <label for="girardinAG">
+              Girardin avec agrément — réduction (attestation)
+              <small style="display:block;color:#888;font-size:.75rem">Rétrocession 66% · seuls 34% dans le plafond</small>
+            </label>
+            <input type="number" id="girardinAG" value="0" min="0">
+            <div class="niche-cell">
+              <span class="niche-marker niche-18k-34">NICHE 18k</span>
+              <span class="niche-marker niche-18k-34">34 %</span>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <label for="fcpi">Souscription FCPI / FIP</label>
+            <input type="number" id="fcpi" value="0" min="0">
+            <div class="niche-cell">
+              <span class="niche-marker niche-10k">NICHE 10k</span>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <label for="sofica">Sofica</label>
+            <input type="number" id="sofica" value="0" min="0">
+            <div class="niche-cell">
+              <span class="niche-marker niche-18k">NICHE 18k</span>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <label for="autresReductions">Autres réductions d'impôt</label>
+            <input type="number" id="autresReductions" value="0" min="0">
+            <div class="niche-cell">
+              <span class="niche-marker niche-10k">NICHE 10k</span>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <label for="autresCredits">Autres crédits d'impôt</label>
+            <input type="number" id="autresCredits" value="0" min="0">
+            <div class="niche-cell">
+              <span class="niche-marker niche-10k">NICHE 10k</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div><!-- /inputs-col -->
+
+    <!-- Colonne droite : résultats -->
+    <aside class="results-panel">
+      <h2>Résultats</h2>
+      <div class="results-list">
+        <div class="res-row"><span class="res-label">Revenu brut global</span><span class="res-val" id="res-rbg">—</span></div>
+        <div class="res-row"><span class="res-label">Revenu net imposable</span><span class="res-val" id="res-rni">—</span></div>
+        <div class="res-row"><span class="res-label">Nombre de parts</span><span class="res-val" id="res-parts">—</span></div>
+        <div class="res-row"><span class="res-label">Quotient familial (R/N)</span><span class="res-val" id="res-qf">—</span></div>
+        <div class="res-row separator"></div>
+        <div class="res-row"><span class="res-label">Impôt brut (barème)</span><span class="res-val" id="res-impot-brut">—</span></div>
+        <div class="res-row"><span class="res-label">Supplément plafonnement QF</span><span class="res-val" id="res-supp-qf">—</span></div>
+        <div class="res-row highlight"><span class="res-label">Après plafonnement QF</span><span class="res-val" id="res-apres-qf">—</span></div>
+        <div class="res-row"><span class="res-label">Décote</span><span class="res-val" id="res-decote">—</span></div>
+        <div class="res-row highlight"><span class="res-label">Après décote</span><span class="res-val" id="res-apres-decote">—</span></div>
+        <div class="res-row separator"></div>
+        <div class="res-row"><span class="res-label">IR mobilier (PFU)</span><span class="res-val" id="res-ir-mob">—</span></div>
+        <div class="res-row"><span class="res-label">Prélèvements sociaux</span><span class="res-val" id="res-ps">—</span></div>
+        <div class="res-row separator"></div>
+        <div class="res-row"><span class="res-label">Total réductions</span><span class="res-val" id="res-reductions">—</span></div>
+        <div class="res-row"><span class="res-label">Total crédits</span><span class="res-val" id="res-credits">—</span></div>
+        <div class="res-row"><span class="res-label">Niches utilisées / plafond</span><span class="res-val" id="res-niches">—</span></div>
+        <div class="res-row separator"></div>
+        <div class="res-row total-final">
+          <span class="res-label">IMPÔT NET</span>
+          <span class="res-val" id="res-impot-net">—</span>
+        </div>
+        <div class="res-row"><span class="res-label">Taux moyen</span><span class="res-val" id="res-taux-moyen">—</span></div>
+        <div class="res-row"><span class="res-label">TMI</span><span class="res-val" id="res-tmi">—</span></div>
+      </div>
+    </aside>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     ONGLET 2 : CALCUL DÉTAILLÉ
+═══════════════════════════════════════════════ -->
+<div id="calcul" class="tab-pane">
+
+  <!-- Étape 1 -->
+  <div class="calc-section">
+    <h2>Étape 1 — Revenu brut global</h2>
+    <table class="calc-table">
+      <tr><td class="td-label">Salaires après abattement 10 %</td><td class="td-val" id="cd-sal-val">—</td><td class="td-note" id="cd-sal-note"></td></tr>
+      <tr><td class="td-label">Pensions après abattement 10 %</td><td class="td-val" id="cd-pen-val">—</td><td class="td-note" id="cd-pen-note"></td></tr>
+      <tr><td class="td-label">BNC micro après abattement 34 %</td><td class="td-val" id="cd-bnc-val">—</td><td class="td-note" id="cd-bnc-note"></td></tr>
+      <tr><td class="td-label">BNC réel</td><td class="td-val" id="cd-bncr-val">—</td><td class="td-note" id="cd-bncr-note"></td></tr>
+      <tr><td class="td-label">Micro-foncier (après abat. 30 %)</td><td class="td-val" id="cd-mfon-val">—</td><td class="td-note" id="cd-mfon-note"></td></tr>
+      <tr><td class="td-label">Foncier réel</td><td class="td-val" id="cd-fon-val">—</td><td class="td-note" id="cd-fon-note"></td></tr>
+      <tr><td class="td-label">Meublé classé (après abat. 50 %)</td><td class="td-val" id="cd-mbc-val">—</td><td class="td-note" id="cd-mbc-note"></td></tr>
+      <tr><td class="td-label">Meublé non classé (après abat. 30 %)</td><td class="td-val" id="cd-mbnc-val">—</td><td class="td-note" id="cd-mbnc-note"></td></tr>
+      <tr><td class="td-label">Dividendes intégrés au barème</td><td class="td-val" id="cd-div-val">—</td><td class="td-note" id="cd-div-note"></td></tr>
+      <tr><td class="td-label">Plus-values intégrées au barème</td><td class="td-val" id="cd-pv-val">—</td><td class="td-note" id="cd-pv-note"></td></tr>
+      <tr><td class="td-label">Autres revenus</td><td class="td-val" id="cd-autrev-val">—</td><td class="td-note" id="cd-autrev-note"></td></tr>
+      <tr class="total-row"><td class="td-label">▶ REVENU BRUT GLOBAL</td><td class="td-val" id="cd-rbg-val">—</td><td class="td-note" id="cd-rbg-note"></td></tr>
+    </table>
+  </div>
+
+  <!-- Étape 2 -->
+  <div class="calc-section">
+    <h2>Étape 2 — Revenu net imposable</h2>
+    <table class="calc-table">
+      <tr><td class="td-label">− Versements PER</td><td class="td-val" id="cd-per-val">—</td><td class="td-note" id="cd-per-note"></td></tr>
+      <tr><td class="td-label">− Pensions alimentaires versées</td><td class="td-val" id="cd-palim-val">—</td><td class="td-note" id="cd-palim-note"></td></tr>
+      <tr><td class="td-label">− CSG déductible</td><td class="td-val" id="cd-csg-val">—</td><td class="td-note" id="cd-csg-note"></td></tr>
+      <tr><td class="td-label">− Autres charges</td><td class="td-val" id="cd-ach-val">—</td><td class="td-note" id="cd-ach-note"></td></tr>
+      <tr class="total-row"><td class="td-label">▶ REVENU NET IMPOSABLE</td><td class="td-val" id="cd-rni-val">—</td><td class="td-note" id="cd-rni-note"></td></tr>
+    </table>
+  </div>
+
+  <!-- Étape 3 -->
+  <div class="calc-section">
+    <h2>Étape 3 — Quotient familial et barème</h2>
+    <table class="calc-table">
+      <tr><td class="td-label">Quotient familial (R / N)</td><td class="td-val" id="cd-qf-val">—</td><td class="td-note" id="cd-qf-note"></td></tr>
+      <tr><td class="td-label">Impôt par part (barème)</td><td class="td-val" id="cd-ipp-val">—</td><td class="td-note" id="cd-ipp-note"></td></tr>
+      <tr class="total-row"><td class="td-label">▶ IMPÔT BRUT</td><td class="td-val" id="cd-ibr-val">—</td><td class="td-note" id="cd-ibr-note"></td></tr>
+    </table>
+  </div>
+
+  <!-- Étape 4 -->
+  <div class="calc-section">
+    <h2>Étape 4 — Plafonnement du quotient familial</h2>
+    <table class="calc-table">
+      <tr><td class="td-label">QF avec parts de base uniquement</td><td class="td-val" id="cd-qfb-val">—</td><td class="td-note" id="cd-qfb-note"></td></tr>
+      <tr><td class="td-label">Impôt avec parts de base</td><td class="td-val" id="cd-ibase-val">—</td><td class="td-note" id="cd-ibase-note"></td></tr>
+      <tr><td class="td-label">Avantage procuré par les demi-parts</td><td class="td-val" id="cd-avqf-val">—</td><td class="td-note" id="cd-avqf-note"></td></tr>
+      <tr><td class="td-label">Plafond total avantage QF</td><td class="td-val" id="cd-plqf-val">—</td><td class="td-note" id="cd-plqf-note"></td></tr>
+      <tr><td class="td-label">Supplément (plafonnement QF)</td><td class="td-val" id="cd-suqf-val">—</td><td class="td-note" id="cd-suqf-note"></td></tr>
+      <tr class="total-row"><td class="td-label">▶ IMPÔT APRÈS PLAFONNEMENT QF</td><td class="td-val" id="cd-aqf-val">—</td><td class="td-note" id="cd-aqf-note"></td></tr>
+    </table>
+  </div>
+
+  <!-- Étape 5 -->
+  <div class="calc-section">
+    <h2>Étape 5 — Décote</h2>
+    <table class="calc-table">
+      <tr><td class="td-label">Seuil de décote applicable</td><td class="td-val" id="cd-sdec-val">—</td><td class="td-note" id="cd-sdec-note"></td></tr>
+      <tr><td class="td-label">Montant de la décote</td><td class="td-val" id="cd-dec-val">—</td><td class="td-note" id="cd-dec-note"></td></tr>
+      <tr class="total-row"><td class="td-label">▶ IMPÔT APRÈS DÉCOTE</td><td class="td-val" id="cd-adec-val">—</td><td class="td-note" id="cd-adec-note"></td></tr>
+    </table>
+  </div>
+
+  <!-- Étape 6 -->
+  <div class="calc-section">
+    <h2>Étape 6 — IR sur dividendes et plus-values</h2>
+    <table class="calc-table">
+      <tr><td class="td-label">IR sur dividendes / PV (PFU : 12,8 % IR)</td><td class="td-val" id="cd-irmob-val">—</td><td class="td-note" id="cd-irmob-note"></td></tr>
+    </table>
+  </div>
+
+  <!-- Étape 7 -->
+  <div class="calc-section">
+    <h2>Étape 7 — Prélèvements sociaux</h2>
+    <table class="calc-table">
+      <tr><td class="td-label">PS mobilier — dividendes + PV (18,6 %)</td><td class="td-val" id="cd-psmob-val">—</td><td class="td-note" id="cd-psmob-note"></td></tr>
+      <tr><td class="td-label">PS foncier — revenus fonciers nets (17,2 %)</td><td class="td-val" id="cd-psfon-val">—</td><td class="td-note" id="cd-psfon-note"></td></tr>
+      <tr class="total-row"><td class="td-label">▶ TOTAL PRÉLÈVEMENTS SOCIAUX</td><td class="td-val" id="cd-tps-val">—</td><td class="td-note" id="cd-tps-note"></td></tr>
+    </table>
+  </div>
+
+  <!-- Étape 8 -->
+  <div class="calc-section">
+    <h2>Étape 8 — Réductions d'impôt</h2>
+    <table class="calc-table">
+      <tr class="hors-niche"><td class="td-label">Réduction dons (75 % / 66 %) — HORS NICHE</td><td class="td-val" id="cd-rdons-val">—</td><td class="td-note" id="cd-rdons-note"></td></tr>
+      <tr><td class="td-label">Pinel / Denormandie — NICHE 10k</td><td class="td-val" id="cd-rpinel-val">—</td><td class="td-note" id="cd-rpinel-note"></td></tr>
+      <tr><td class="td-label">Girardin plein droit — NICHE 18k (44 %)</td><td class="td-val" id="cd-rgpd-val">—</td><td class="td-note" id="cd-rgpd-note"></td></tr>
+      <tr><td class="td-label">Girardin avec agrément — NICHE 18k (34 %)</td><td class="td-val" id="cd-rgag-val">—</td><td class="td-note" id="cd-rgag-note"></td></tr>
+      <tr><td class="td-label">FCPI / FIP — NICHE 10k</td><td class="td-val" id="cd-rfcpi-val">—</td><td class="td-note" id="cd-rfcpi-note"></td></tr>
+      <tr><td class="td-label">Sofica — NICHE 18k</td><td class="td-val" id="cd-rsof-val">—</td><td class="td-note" id="cd-rsof-note"></td></tr>
+      <tr><td class="td-label">Autres réductions — NICHE 10k</td><td class="td-val" id="cd-raut-val">—</td><td class="td-note" id="cd-raut-note"></td></tr>
+      <tr class="total-row"><td class="td-label">▶ TOTAL RÉDUCTIONS</td><td class="td-val" id="cd-tred-val">—</td><td class="td-note" id="cd-tred-note"></td></tr>
+    </table>
+  </div>
+
+  <!-- Étape 9 -->
+  <div class="calc-section">
+    <h2>Étape 9 — Crédits d'impôt</h2>
+    <table class="calc-table">
+      <tr><td class="td-label">Crédit emploi à domicile (50 %) — NICHE 10k</td><td class="td-val" id="cd-cdom-val">—</td><td class="td-note" id="cd-cdom-note"></td></tr>
+      <tr><td class="td-label">Crédit garde enfants (50 %) — NICHE 10k</td><td class="td-val" id="cd-cgrd-val">—</td><td class="td-note" id="cd-cgrd-note"></td></tr>
+      <tr><td class="td-label">Autres crédits — NICHE 10k</td><td class="td-val" id="cd-caut-val">—</td><td class="td-note" id="cd-caut-note"></td></tr>
+      <tr class="total-row"><td class="td-label">▶ TOTAL CRÉDITS</td><td class="td-val" id="cd-tcrd-val">—</td><td class="td-note" id="cd-tcrd-note"></td></tr>
+    </table>
+  </div>
+
+  <!-- Étape 10 -->
+  <div class="calc-section">
+    <h2>Étape 10 — Plafonnement des niches fiscales</h2>
+    <table class="calc-table">
+      <tr><td class="td-label">Niches utilisées (Girardin PD × 44 %, AG × 34 %)</td><td class="td-val" id="cd-nutil-val">—</td><td class="td-note" id="cd-nutil-note"></td></tr>
+      <tr><td class="td-label">Plafond applicable</td><td class="td-val" id="cd-nplaf-val">—</td><td class="td-note" id="cd-nplaf-note"></td></tr>
+      <tr><td class="td-label">Dépassement du plafond (avantage perdu)</td><td class="td-val warn-niche" id="cd-ndep-val">—</td><td class="td-note" id="cd-ndep-note"></td></tr>
+    </table>
+  </div>
+
+  <!-- Étape 11 -->
+  <div class="calc-section final">
+    <h2>Étape 11 — Impôt net final</h2>
+    <table class="calc-table">
+      <tr><td class="td-label">Impôt après décote</td><td class="td-val" id="cd-apd-val">—</td><td class="td-note" id="cd-apd-note"></td></tr>
+      <tr><td class="td-label">+ IR mobilier (PFU)</td><td class="td-val" id="cd-irm2-val">—</td><td class="td-note" id="cd-irm2-note"></td></tr>
+      <tr><td class="td-label">− Réductions appliquées</td><td class="td-val" id="cd-rapp-val">—</td><td class="td-note" id="cd-rapp-note"></td></tr>
+      <tr><td class="td-label">− Crédits appliqués</td><td class="td-val" id="cd-capp-val">—</td><td class="td-note" id="cd-capp-note"></td></tr>
+      <tr><td class="td-label">+ Prélèvements sociaux</td><td class="td-val" id="cd-ps2-val">—</td><td class="td-note" id="cd-ps2-note"></td></tr>
+      <tr class="grand-total"><td class="td-label">▶ IMPÔT NET FINAL</td><td class="td-val" id="cd-inet-val">—</td><td class="td-note" id="cd-inet-note"></td></tr>
+      <tr><td class="td-label">Taux moyen d'imposition</td><td class="td-val" id="cd-tm-val">—</td><td class="td-note" id="cd-tm-note"></td></tr>
+      <tr><td class="td-label">Taux marginal (TMI)</td><td class="td-val" id="cd-tmi-val">—</td><td class="td-note" id="cd-tmi-note"></td></tr>
+    </table>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════
+     ONGLET 3 : PARAMÈTRES FISCAUX
+═══════════════════════════════════════════════ -->
+<div id="parametres" class="tab-pane">
+
+  <div class="param-card">
+    <h2>Barème progressif de l'IR</h2>
+    <table class="param-table">
+      <tr><td class="pt-label">Jusqu'à 11 600 €</td><td class="pt-val">0 %</td></tr>
+      <tr><td class="pt-label">11 601 € à 29 579 €</td><td class="pt-val">11 %</td></tr>
+      <tr><td class="pt-label">29 580 € à 84 577 €</td><td class="pt-val">30 %</td></tr>
+      <tr><td class="pt-label">84 578 € à 181 917 €</td><td class="pt-val">41 %</td></tr>
+      <tr><td class="pt-label">Au-delà de 181 917 €</td><td class="pt-val">45 %</td></tr>
+      <tr><td colspan="2" class="pt-note">Source : BOI-IR-LIQ-20-10 du 07/04/2026</td></tr>
+    </table>
+  </div>
+
+  <div class="param-card">
+    <h2>Quotient familial</h2>
+    <table class="param-table">
+      <tr><td class="pt-label">Plafond par demi-part supplémentaire</td><td class="pt-val">1 807 €</td></tr>
+      <tr><td class="pt-label">Parent isolé — 1er enfant</td><td class="pt-val">4 262 €</td></tr>
+      <tr><td class="pt-label">Parent isolé — demi-part 1er enfant</td><td class="pt-val">2 131 €</td></tr>
+      <tr><td class="pt-label">Veuf avec enfants — part supp.</td><td class="pt-val">2 011 €</td></tr>
+      <tr><td colspan="2" class="pt-note">Source : BOI-IR-LIQ-20-20-20 du 07/04/2026</td></tr>
+    </table>
+  </div>
+
+  <div class="param-card">
+    <h2>Décote</h2>
+    <table class="param-table">
+      <tr><td class="pt-label">Plafond célibataire</td><td class="pt-val">897 €</td></tr>
+      <tr><td class="pt-label">Plafond couple</td><td class="pt-val">1 483 €</td></tr>
+      <tr><td class="pt-label">Seuil impôt célibataire</td><td class="pt-val">1 982 €</td></tr>
+      <tr><td class="pt-label">Seuil impôt couple</td><td class="pt-val">3 277 €</td></tr>
+      <tr><td class="pt-label">Taux de décote</td><td class="pt-val">45,25 %</td></tr>
+      <tr><td colspan="2" class="pt-note">Source : BOI-IR-LIQ-20-20-30 du 07/04/2026</td></tr>
+    </table>
+  </div>
+
+  <div class="param-card">
+    <h2>Abattements</h2>
+    <table class="param-table">
+      <tr><td class="pt-label">Salaires — taux</td><td class="pt-val">10 %</td></tr>
+      <tr><td class="pt-label">Salaires — min / déclarant</td><td class="pt-val">509 €</td></tr>
+      <tr><td class="pt-label">Salaires — max / déclarant</td><td class="pt-val">14 555 €</td></tr>
+      <tr><td class="pt-label">Pensions — taux</td><td class="pt-val">10 %</td></tr>
+      <tr><td class="pt-label">Pensions — min / personne</td><td class="pt-val">454 €</td></tr>
+      <tr><td class="pt-label">Pensions — max / foyer</td><td class="pt-val">4 439 €</td></tr>
+      <tr><td class="pt-label">Micro-BNC — taux</td><td class="pt-val">34 %</td></tr>
+      <tr><td class="pt-label">Micro-BNC — min</td><td class="pt-val">305 €</td></tr>
+      <tr><td class="pt-label">Micro-foncier — taux</td><td class="pt-val">30 %</td></tr>
+      <tr><td class="pt-label">Meublé classé micro-BIC</td><td class="pt-val">50 %</td></tr>
+      <tr><td class="pt-label">Meublé non classé micro-BIC</td><td class="pt-val">30 %</td></tr>
+      <tr><td class="pt-label">Dividendes (si barème)</td><td class="pt-val">40 %</td></tr>
+    </table>
+  </div>
+
+  <div class="param-card">
+    <h2>Prélèvements sociaux</h2>
+    <table class="param-table">
+      <tr><td class="pt-label">PS revenus mobiliers (dividendes, PV mob.)</td><td class="pt-val">18,6 %</td></tr>
+      <tr><td class="pt-label">PS revenus fonciers, PV immo, AV</td><td class="pt-val">17,2 %</td></tr>
+      <tr><td class="pt-label">PFU — part IR</td><td class="pt-val">12,8 %</td></tr>
+      <tr><td class="pt-label">CSG déductible</td><td class="pt-val">6,8 %</td></tr>
+      <tr><td colspan="2" class="pt-note">Source : LFSS 2026, art. 12</td></tr>
+    </table>
+  </div>
+
+  <div class="param-card">
+    <h2>Niches fiscales</h2>
+    <table class="param-table">
+      <tr><td class="pt-label">Plafond général</td><td class="pt-val">10 000 €</td></tr>
+      <tr><td class="pt-label">Plafond majoré (Girardin / Sofica)</td><td class="pt-val">18 000 €</td></tr>
+      <tr><td class="pt-label">Girardin plein droit — quote-part</td><td class="pt-val">44 %</td></tr>
+      <tr><td class="pt-label">Girardin avec agrément — quote-part</td><td class="pt-val">34 %</td></tr>
+      <tr><td colspan="2" class="pt-note">Source : art. 200-0 A, 4° du CGI — service-public.gouv.fr/F31179</td></tr>
+    </table>
+  </div>
+
+</div>
+
+<script src="js/params.js"></script>
+<script src="js/calculator.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

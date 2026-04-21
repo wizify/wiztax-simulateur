@@ -4,9 +4,9 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bleu:       #1a3f6f;
-  --bleu-light: #2d6db5;
-  --bleu-pale:  #e8f0fb;
+  --bleu:       #3340FA;
+  --bleu-light: #5563fb;
+  --bleu-pale:  #eaebff;
   --orange:     #e07b2a;
   --orange-pale:#fef0e0;
   --vert:       #2e7d52;
@@ -73,7 +73,77 @@ header span { font-size: .85rem; opacity: .7; }
 .tab-pane.active { display: block; }
 
 /* ─────────────────────────────────────────────
-   LAYOUT SIMULATEUR (inputs + résultats)
+   TOOLTIP SYSTÈME
+   Usage : <span class="tip" data-tip="texte">ℹ</span>
+───────────────────────────────────────────── */
+.tip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: var(--bleu-pale);
+  color: var(--bleu);
+  font-size: .68rem;
+  font-weight: 700;
+  font-style: normal;
+  cursor: help;
+  position: relative;
+  flex-shrink: 0;
+  vertical-align: middle;
+  margin-left: 4px;
+  transition: background .15s;
+}
+.tip:hover { background: var(--bleu); color: #fff; }
+
+.tip::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1a1a2e;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: .78rem;
+  font-weight: 400;
+  font-style: normal;
+  white-space: pre-line;
+  width: max-content;
+  max-width: 280px;
+  line-height: 1.5;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .18s;
+  z-index: 200;
+  box-shadow: 0 4px 16px rgba(0,0,0,.25);
+}
+.tip::before {
+  content: '';
+  position: absolute;
+  bottom: calc(100% + 2px);
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: #1a1a2e;
+  opacity: 0;
+  transition: opacity .18s;
+  z-index: 201;
+}
+.tip:hover::after,
+.tip:hover::before { opacity: 1; }
+
+/* Tooltip qui s'ouvre vers le bas (quand on est en haut de page) */
+.tip.tip-down::after  { top: calc(100% + 8px); bottom: auto; }
+.tip.tip-down::before { top: calc(100% + 2px); bottom: auto; border-top-color: transparent; border-bottom-color: #1a1a2e; }
+
+/* Tooltip aligné à gauche */
+.tip.tip-left::after { left: 0; transform: none; }
+
+/* ─────────────────────────────────────────────
+   LAYOUT SIMULATEUR
 ───────────────────────────────────────────── */
 .sim-layout {
   display: grid;
@@ -101,7 +171,7 @@ header span { font-size: .85rem; opacity: .7; }
   text-transform: uppercase;
   letter-spacing: .6px;
   padding: 10px 16px;
-  border-bottom: 2px solid var(--gris-bord);
+  border-bottom: 2px solid #d0d3fd;
 }
 
 /* ─────────────────────────────────────────────
@@ -127,6 +197,10 @@ header span { font-size: .85rem; opacity: .7; }
   font-size: .87rem;
   color: #333;
   line-height: 1.3;
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  flex-wrap: wrap;
 }
 .form-row .col-header {
   font-size: .78rem;
@@ -135,7 +209,6 @@ header span { font-size: .85rem; opacity: .7; }
   text-align: center;
 }
 
-/* Input numérique */
 .form-row input[type="number"],
 .form-row select {
   width: 100%;
@@ -153,12 +226,11 @@ header span { font-size: .85rem; opacity: .7; }
 .form-row input[type="number"]:focus,
 .form-row select:focus {
   outline: none;
-  border-color: var(--bleu-light);
-  box-shadow: 0 0 0 3px rgba(45,109,181,.15);
+  border-color: var(--bleu);
+  box-shadow: 0 0 0 3px rgba(51,64,250,.15);
 }
 .form-row select { text-align: left; }
 
-/* Ligne "résultat calculé" */
 .form-row.computed label { font-weight: 700; color: var(--bleu); }
 .form-row.computed .computed-val {
   background: var(--bleu-pale);
@@ -170,19 +242,19 @@ header span { font-size: .85rem; opacity: .7; }
   font-size: .88rem;
 }
 
-/* Niche marker */
+/* Niche markers */
 .niche-marker {
-  font-size: .72rem;
+  font-size: .70rem;
   font-weight: 700;
-  padding: 2px 6px;
+  padding: 2px 5px;
   border-radius: 3px;
   display: inline-block;
   line-height: 1.5;
 }
-.niche-10k    { color: var(--niche-ok);  background: #f0f0f0; }
-.niche-18k    { color: #5a5a00; background: #fffacc; }
-.niche-18k-44 { color: #5a5a00; background: #fffacc; }
-.niche-18k-34 { color: #5a5a00; background: #fffacc; }
+.niche-10k    { color: #555;  background: #ebebeb; }
+.niche-18k    { color: #665500; background: #fff3cc; }
+.niche-18k-44 { color: #665500; background: #fff3cc; }
+.niche-18k-34 { color: #665500; background: #fff3cc; }
 .niche-hors   { color: var(--niche-hors); background: #fdecea; }
 
 .niche-cell { display: flex; flex-direction: column; gap: 2px; }
@@ -251,7 +323,7 @@ header span { font-size: .85rem; opacity: .7; }
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   margin-bottom: 16px;
-  overflow: hidden;
+  overflow: visible; /* important pour les tooltips */
 }
 .calc-section h2 {
   background: var(--orange-pale);
@@ -262,6 +334,7 @@ header span { font-size: .85rem; opacity: .7; }
   letter-spacing: .6px;
   padding: 10px 16px;
   border-bottom: 2px solid #f5d9b5;
+  border-radius: var(--radius) var(--radius) 0 0;
 }
 .calc-section.final h2 {
   background: var(--rouge-pale);
@@ -277,20 +350,37 @@ header span { font-size: .85rem; opacity: .7; }
 .calc-table td {
   padding: 6px 16px;
   border-bottom: 1px solid #f0f2f5;
-  vertical-align: top;
+  vertical-align: middle;
 }
 .calc-table tr:last-child td { border-bottom: none; }
-.calc-table .td-label { color: #444; width: 55%; }
-.calc-table .td-val   { text-align: right; font-weight: 600; color: #1a1a2e; width: 20%; }
-.calc-table .td-note  { color: var(--gris-text); font-size: .78rem; width: 25%; }
+
+.calc-table .td-label {
+  color: #444;
+  width: 65%;
+  display: table-cell; /* reset */
+}
+.calc-table .td-label-inner {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.calc-table .td-val {
+  text-align: right;
+  font-weight: 600;
+  color: #1a1a2e;
+  width: 35%;
+  font-variant-numeric: tabular-nums;
+}
+/* On n'a plus de colonne notes — tout est en tooltip */
+
 .calc-table tr.total-row td { background: var(--orange-pale); font-weight: 700; }
 .calc-table tr.total-row .td-label { color: var(--orange); }
 .calc-table tr.total-row .td-val   { color: var(--orange); }
 .calc-table tr.grand-total td { background: var(--rouge-pale); font-weight: 800; font-size: .95rem; }
 .calc-table tr.grand-total .td-label { color: var(--rouge); }
 .calc-table tr.grand-total .td-val   { color: var(--rouge); }
-.calc-table tr.hors-niche .td-label { color: var(--niche-hors); }
-.calc-table tr.warn-niche .td-val  { color: var(--rouge); }
+.calc-table tr.hors-niche .td-label .td-label-inner { color: var(--niche-hors); }
+.calc-table .warn-val { color: var(--rouge) !important; }
 
 /* ─────────────────────────────────────────────
    ONGLET PARAMÈTRES
@@ -330,7 +420,13 @@ header span { font-size: .85rem; opacity: .7; }
 .param-table tr:last-child td { border-bottom: none; }
 .param-table .pt-label { color: #444; width: 70%; }
 .param-table .pt-val   { text-align: right; font-weight: 600; color: var(--vert); }
-.param-table .pt-note  { color: var(--gris-text); font-size: .75rem; padding: 2px 14px 5px; }
+.param-table .pt-source {
+  color: var(--gris-text);
+  font-size: .75rem;
+  padding: 4px 14px 6px;
+  font-style: italic;
+  background: #f8faf9;
+}
 
 /* ─────────────────────────────────────────────
    RESPONSIVE

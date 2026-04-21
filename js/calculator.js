@@ -257,26 +257,34 @@ function calculerIR(input) {
     det.impotApresDecote + det.irMobilier - det.reductionsAppliquees
   ) - det.creditsAppliques + det.totalPS;
 
-  det.tauxMoyen = det.revenuNetImposable > 0
-    ? det.impotNet / det.revenuNetImposable
+  // Revenu de référence = somme des revenus bruts déclarés (avant abattements) moins les charges
+  // C'est ce que l'administration utilise pour calculer le taux moyen affiché
+  det.revenuReference = Math.max(0,
+    input.sal1 + input.sal2
+    + input.pen1 + input.pen2
+    + input.bncMicro1 + input.bncMicro2
+    + input.bncReel1 + input.bncReel2
+    + input.microFoncier + input.foncierReel
+    + input.meubleClasse + input.meubleNonClasse
+    + input.dividendes + input.pv
+    + input.autresRevenus
+    - input.per - input.pensionsAlim - input.csgDeductible - input.autresCharges
+  );
+
+  det.tauxMoyen = det.revenuReference > 0
+    ? det.impotNet / det.revenuReference
     : 0;
 
-  // TMI
-  const qf = det.quotientFamilial;
-  let tmi = 0;
-  for (const t of [...PARAMS.bareme].reverse()) {
-    if (qf > (PARAMS.bareme[PARAMS.bareme.indexOf(t) - 1]?.limite ?? 0)) {
-      tmi = t.taux;
-      break;
-    }
-  }
-  // Recalcul TMI propre
+  // TMI : quand le plafonnement QF est actif (supplementQF > 0), le taux marginal
+  // est déterminé par le QF de base (sans les demi-parts supplémentaires), car
+  // d(impôt_final)/d(RNI) = d(impôt_base)/d(RNI) = taux_barème(QF_base)
+  const qfTMI = det.supplementQF > 0 ? det.qfBase : det.quotientFamilial;
   let prevLimite = 0;
   det.tmi = 0;
   for (const t of PARAMS.bareme) {
-    if (qf > prevLimite) det.tmi = t.taux;
+    if (qfTMI > prevLimite) det.tmi = t.taux;
     prevLimite = t.limite;
-    if (qf <= t.limite) break;
+    if (qfTMI <= t.limite) break;
   }
 
   return det;

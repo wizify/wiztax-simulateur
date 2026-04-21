@@ -6,33 +6,33 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  /* Surfaces (tonal hierarchy — no hard 1px borders) */
-  --surface:                 #F8F9FC;
-  --surface-container-low:   #F2F3F6;
-  --surface-container:       #EDEEF1;
-  --surface-container-high:  #E7E8EB;
+  /* Surfaces — légèrement plus chaleureuses */
+  --surface:                 #F5F6FA;
+  --surface-container-low:   #EDEEF5;
+  --surface-container:       #E5E6EF;
+  --surface-container-high:  #DADBE8;
   --surface-lowest:          #FFFFFF;
 
-  /* Text */
-  --on-surface:          #191C1E;
-  --on-surface-variant:  #454556;
-  --outline:             #757588;
-  --outline-variant:     #C5C5DA;
+  /* Text — plus de contraste */
+  --on-surface:          #141720;
+  --on-surface-variant:  #3E404F;
+  --outline:             #6B6C7E;
+  --outline-variant:     #BBBCD0;
 
   /* Primary accent — utilisé UNIQUEMENT en accent, pas en fond de masse */
   --primary:             #0716E5;
   --accent:              #3340FA;   /* surface-tint */
 
   /* Semantic */
-  --warning:  #872100;   /* tertiary */
+  --warning:  #872100;
   --error:    #BA1A1A;
 
   /* Tokens */
-  --shadow-arch:   0px 12px 32px rgba(51, 64, 250, 0.06);
-  --shadow-float:  0px 4px 16px rgba(51, 64, 250, 0.10);
+  --shadow-arch:   0px 8px 24px rgba(20, 23, 32, 0.08), 0px 1px 4px rgba(20, 23, 32, 0.04);
+  --shadow-float:  0px 4px 16px rgba(51, 64, 250, 0.12);
   --gradient-cta:  linear-gradient(135deg, #3340FA 0%, #0716E5 100%);
-  --radius-card:   1.5rem;   /* 24px */
-  --radius-input:  0.75rem;  /* 12px */
+  --radius-card:   1.25rem;  /* 20px — légèrement moins rond */
+  --radius-input:  0.625rem; /* 10px */
   --radius-sm:     0.5rem;   /* 8px */
 
   /* Typographie */
@@ -186,14 +186,15 @@ header span {
 }
 
 /* ─────────────────────────────────────────────
-   CARTES SECTIONS — blanches, ombre douce
+   CARTES SECTIONS — blanches, top-stripe accent
 ───────────────────────────────────────────── */
 .section-card {
   background: var(--surface-lowest);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-arch);
   margin-bottom: 16px;
-  overflow: visible;
+  overflow: hidden;   /* contient le border-top coloré */
+  border-top: 3px solid var(--accent);
 }
 .section-card h2 {
   font-family: var(--font-headline);
@@ -201,11 +202,9 @@ header span {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: .7px;
-  color: var(--on-surface-variant);
+  color: var(--on-surface);
   padding: 14px 20px;
-  border-left: 3px solid var(--accent);  /* insight rail */
   background: var(--surface-container-low);
-  border-radius: var(--radius-card) var(--radius-card) 0 0;
 }
 
 /* ─────────────────────────────────────────────
@@ -227,7 +226,7 @@ header span {
   font-family: var(--font-body);
   font-size: .86rem;
   font-weight: 500;
-  color: var(--on-surface-variant);
+  color: var(--on-surface);   /* noir — plus lisible */
   line-height: 1.4;
   display: flex;
   align-items: flex-start;
@@ -316,6 +315,7 @@ header span {
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-arch);
   overflow: hidden;
+  border-top: 3px solid var(--accent);
 }
 .results-panel h2 {
   font-family: var(--font-headline);
@@ -323,9 +323,8 @@ header span {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: .7px;
-  color: var(--on-surface-variant);
+  color: var(--on-surface);
   padding: 14px 20px;
-  border-left: 3px solid var(--accent);
   background: var(--surface-container-low);
 }
 .results-list { padding: 6px 0 12px; }
@@ -338,7 +337,7 @@ header span {
   font-size: .84rem;
   gap: 8px;
 }
-.res-row .res-label { color: var(--on-surface-variant); flex: 1; font-weight: 400; }
+.res-row .res-label { color: var(--on-surface-variant); flex: 1; font-weight: 500; }
 .res-row .res-val   { font-weight: 600; color: var(--on-surface); white-space: nowrap; font-variant-numeric: tabular-nums; }
 
 .res-row.separator {
@@ -381,7 +380,8 @@ header span {
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-arch);
   margin-bottom: 16px;
-  overflow: visible;
+  overflow: hidden;
+  border-top: 3px solid var(--accent);
 }
 .calc-section h2 {
   font-family: var(--font-headline);
@@ -389,14 +389,14 @@ header span {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: .7px;
-  color: var(--on-surface-variant);
+  color: var(--on-surface);
   padding: 14px 20px;
-  border-left: 3px solid var(--accent);
   background: var(--surface-container-low);
-  border-radius: var(--radius-card) var(--radius-card) 0 0;
+}
+.calc-section.final {
+  border-top-color: var(--error);
 }
 .calc-section.final h2 {
-  border-left-color: var(--error);
   color: var(--error);
 }
 
@@ -412,7 +412,7 @@ header span {
 }
 .calc-table tr:hover td { background: var(--surface-container-low); }
 
-.calc-table .td-label { color: var(--on-surface-variant); width: 65%; }
+.calc-table .td-label { color: var(--on-surface); width: 65%; }
 .calc-table .td-label-inner {
   display: flex;
   align-items: center;
@@ -460,6 +460,7 @@ header span {
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-arch);
   overflow: hidden;
+  border-top: 3px solid #2E7D52;  /* vert — différencie l'onglet paramètres */
 }
 .param-card h2 {
   font-family: var(--font-headline);
@@ -467,9 +468,8 @@ header span {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: .7px;
-  color: var(--on-surface-variant);
+  color: var(--on-surface);
   padding: 14px 20px;
-  border-left: 3px solid #2E7D52;  /* vert pour différencier l'onglet paramètres */
   background: var(--surface-container-low);
 }
 .param-table {

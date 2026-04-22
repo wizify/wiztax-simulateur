@@ -15,15 +15,207 @@
 </header>
 
 <nav class="tabs-nav">
-  <button class="tab-btn active" data-tab="simulateur">Simulateur</button>
+  <button class="tab-btn active" data-tab="simplifie">Simulateur simplifié</button>
+  <button class="tab-btn" data-tab="simulateur">Simulateur complet</button>
   <button class="tab-btn" data-tab="calcul">Calcul détaillé</button>
   <button class="tab-btn" data-tab="parametres">Paramètres fiscaux</button>
 </nav>
 
 <!-- ══════════════════════════════════════════════
-     ONGLET 1 : SIMULATEUR
+     ONGLET 1 : SIMULATEUR SIMPLIFIÉ
 ═══════════════════════════════════════════════ -->
-<div id="simulateur" class="tab-pane active">
+<div id="simplifie" class="tab-pane active">
+  <div class="sim-layout">
+
+    <div class="inputs-col">
+
+      <!-- A — SITUATION -->
+      <div class="section-card">
+        <h2>A — Situation personnelle</h2>
+        <div class="form-grid">
+
+          <div class="form-row">
+            <label for="s-situation">Situation familiale</label>
+            <select id="s-situation">
+              <option value="celibataire">Célibataire</option>
+              <option value="marie-pacse">Marié / Pacsé</option>
+              <option value="veuf">Veuf(ve)</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <label for="s-nbEnfants">Enfants à charge
+              <i class="tip tip-down" data-tip="+0,5 part pour les 2 premiers&#10;+1 part à partir du 3e">i</i>
+            </label>
+            <input type="number" id="s-nbEnfants" value="0" min="0" step="1">
+          </div>
+
+          <div class="form-row">
+            <label for="s-gardeAlternee">Enfants en garde alternée
+              <i class="tip tip-down" data-tip="Moitié des parts normales (0,25 puis 0,5)">i</i>
+            </label>
+            <input type="number" id="s-gardeAlternee" value="0" min="0" step="1">
+          </div>
+
+          <div class="form-row">
+            <label for="s-parentIsole">Parent isolé (case T)</label>
+            <select id="s-parentIsole">
+              <option value="non">Non</option>
+              <option value="oui">Oui</option>
+            </select>
+          </div>
+
+          <div class="form-row computed">
+            <label>→ Nombre de parts fiscales</label>
+            <div class="computed-val" id="s-parts-affichage">1.00 parts</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- B — REVENUS -->
+      <div class="section-card">
+        <h2>B — Revenus</h2>
+        <div class="form-grid">
+
+          <div class="form-row">
+            <label for="s-sal">Salaires nets imposables (total foyer)
+              <i class="tip" data-tip="Case 1AJ + 1BJ de la déclaration.&#10;Abattement 10% automatique (min 509 €, max 14 555 € par déclarant).">i</i>
+            </label>
+            <input type="number" id="s-sal" value="0" min="0">
+          </div>
+
+          <div class="form-row">
+            <label for="s-bnc">BNC / micro-entreprise — CA brut
+              <i class="tip" data-tip="Chiffre d'affaires brut (pas le bénéfice).&#10;Abattement 34% automatique (min 305 €).">i</i>
+            </label>
+            <input type="number" id="s-bnc" value="0" min="0">
+          </div>
+
+          <div class="form-row">
+            <label for="s-dividendes">Dividendes bruts
+              <i class="tip" data-tip="Revenus de participation (SAS, SARL…).&#10;Option PFU : 12,8% IR + 18,6% PS = 31,4% total.&#10;Option barème : abattement 40% puis intégration au revenu.">i</i>
+            </label>
+            <input type="number" id="s-dividendes" value="0" min="0">
+          </div>
+
+          <div class="form-row">
+            <label for="s-optionPFU">Imposition des dividendes
+              <i class="tip" data-tip="PFU (flat tax) : taux unique 30%, souvent avantageux.&#10;Barème : peut être intéressant si TMI ≤ 11%.">i</i>
+            </label>
+            <select id="s-optionPFU">
+              <option value="pfu">PFU — flat tax 30 %</option>
+              <option value="bareme">Barème progressif</option>
+            </select>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- C — CHARGES -->
+      <div class="section-card">
+        <h2>C — Charges déductibles</h2>
+        <div class="form-grid">
+
+          <div class="form-row">
+            <label for="s-per">Versements PER (part déductible)
+              <i class="tip" data-tip="Plan d'Épargne Retraite — versements volontaires déduits du revenu.&#10;Limite : 10% des revenus professionnels (plafond 35 194 € en 2025).">i</i>
+            </label>
+            <input type="number" id="s-per" value="0" min="0">
+          </div>
+
+          <div class="form-row">
+            <label for="s-pensionsAlim">Pensions alimentaires versées</label>
+            <input type="number" id="s-pensionsAlim" value="0" min="0">
+          </div>
+
+          <div class="form-row">
+            <label for="s-csg">CSG déductible
+              <i class="tip" data-tip="6,8% de la CSG sur revenus du patrimoine.&#10;Concerne principalement les dividendes si option barème.">i</i>
+            </label>
+            <input type="number" id="s-csg" value="0" min="0">
+          </div>
+
+        </div>
+      </div>
+
+      <!-- D — RÉDUCTIONS ET CRÉDITS -->
+      <div class="section-card">
+        <h2>D — Réductions et crédits d'impôt</h2>
+        <div class="form-grid">
+
+          <div class="form-row">
+            <label for="s-dons">Dons aux œuvres
+              <i class="tip" data-tip="Réduction : 75% ≤ 2 000 €, puis 66%.&#10;Hors plafond des niches fiscales.">i</i>
+            </label>
+            <input type="number" id="s-dons" value="0" min="0">
+          </div>
+
+          <div class="form-row">
+            <label for="s-emploi">Emploi salarié à domicile
+              <i class="tip" data-tip="Crédit d'impôt (remboursable).&#10;50% des dépenses, plafond 12 000 €.&#10;Saisir le montant total des dépenses.">i</i>
+            </label>
+            <input type="number" id="s-emploi" value="0" min="0">
+          </div>
+
+          <div class="form-row">
+            <label for="s-garde">Frais de garde enfants &lt; 6 ans
+              <i class="tip" data-tip="Crédit d'impôt (remboursable).&#10;50% des dépenses, plafond 3 500 € par enfant.">i</i>
+            </label>
+            <input type="number" id="s-garde" value="0" min="0">
+          </div>
+
+          <div class="form-row">
+            <label for="s-pinel">Investissement Pinel / Denormandie
+              <i class="tip" data-tip="Réduction d'impôt — saisir le montant annuel de la réduction.">i</i>
+            </label>
+            <input type="number" id="s-pinel" value="0" min="0">
+          </div>
+
+          <div class="form-row">
+            <label for="s-sofica">Sofica
+              <i class="tip" data-tip="Réduction d'impôt (financement cinéma/audiovisuel).&#10;Saisir le montant de la réduction.">i</i>
+            </label>
+            <input type="number" id="s-sofica" value="0" min="0">
+          </div>
+
+        </div>
+      </div>
+
+    </div><!-- /inputs-col -->
+
+    <!-- Résultats (sticky) -->
+    <aside class="results-panel">
+      <h2>Résultats</h2>
+      <div class="results-list">
+        <div class="res-row"><span class="res-label">Revenu net imposable</span><span class="res-val" id="s-res-rni">—</span></div>
+        <div class="res-row"><span class="res-label">Nombre de parts</span><span class="res-val" id="s-res-parts">—</span></div>
+        <div class="res-row separator"></div>
+        <div class="res-row"><span class="res-label">Impôt brut (barème)</span><span class="res-val" id="s-res-impot-brut">—</span></div>
+        <div class="res-row"><span class="res-label">Plafonnement QF</span><span class="res-val" id="s-res-supp-qf">—</span></div>
+        <div class="res-row"><span class="res-label">Décote</span><span class="res-val" id="s-res-decote">—</span></div>
+        <div class="res-row highlight"><span class="res-label">Impôt après décote</span><span class="res-val" id="s-res-apres-decote">—</span></div>
+        <div class="res-row separator"></div>
+        <div class="res-row"><span class="res-label">IR mobilier (PFU)</span><span class="res-val" id="s-res-ir-mob">—</span></div>
+        <div class="res-row"><span class="res-label">Prélèvements sociaux</span><span class="res-val" id="s-res-ps">—</span></div>
+        <div class="res-row"><span class="res-label">Réductions / crédits</span><span class="res-val" id="s-res-avantages">—</span></div>
+        <div class="res-row separator"></div>
+        <div class="res-row total-final">
+          <span class="res-label">IMPÔT NET</span>
+          <span class="res-val" id="s-res-impot-net">—</span>
+        </div>
+        <div class="res-row"><span class="res-label">Taux moyen</span><span class="res-val" id="s-res-taux-moyen">—</span></div>
+        <div class="res-row"><span class="res-label">TMI</span><span class="res-val" id="s-res-tmi">—</span></div>
+      </div>
+    </aside>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     ONGLET 2 : SIMULATEUR COMPLET
+═══════════════════════════════════════════════ -->
+<div id="simulateur" class="tab-pane">
   <div class="sim-layout">
 
     <div class="inputs-col">
@@ -230,116 +422,79 @@
       <div class="section-card">
         <h2>D — Réductions et crédits d'impôt</h2>
         <div class="form-grid">
-          <div class="form-row">
-            <label></label>
-            <div class="col-header">Montant</div>
-            <div class="col-header">Niche fiscale</div>
-          </div>
 
           <div class="form-row">
             <label for="dons">
               Dons aux œuvres
-              <i class="tip" data-tip="RÉDUCTION d'impôt (pas de remboursement).&#10;&#10;Calcul : 75% sur les 2 000 premiers € versés, puis 66% au-delà.&#10;&#10;Organismes éligibles : associations reconnues d'utilité publique, aide alimentaire, logement d'urgence, lutte contre les violences…&#10;&#10;⚠ HORS plafond des niches fiscales — pas de limite liée aux 10 000 €.">i</i>
+              <i class="tip" data-tip="RÉDUCTION d'impôt (pas de remboursement).&#10;&#10;Calcul : 75% sur les 2 000 premiers € versés, puis 66% au-delà.&#10;&#10;⚠ Hors plafond des niches fiscales — pas de limite liée aux 10 000 €.">i</i>
             </label>
             <input type="number" id="dons" value="0" min="0">
-            <div class="niche-cell">
-              <span class="niche-marker niche-hors">HORS NICHE</span>
-            </div>
           </div>
 
           <div class="form-row">
             <label for="emploiDomicile">
               Emploi salarié à domicile
-              <i class="tip" data-tip="CRÉDIT d'impôt (remboursable si supérieur à l'impôt).&#10;&#10;Calcul : 50% des dépenses, plafond 12 000 € (simplifié).&#10;Plafond majoré si enfants à charge (+1 500 €/enfant, max 15 000 €).&#10;&#10;Saisir le montant total des dépenses (avant réduction de 50%).&#10;&#10;Dans le plafond des niches fiscales : 10 000 €.">i</i>
+              <i class="tip" data-tip="CRÉDIT d'impôt (remboursable si supérieur à l'impôt).&#10;&#10;Calcul : 50% des dépenses, plafond 12 000 €.&#10;Saisir le montant total des dépenses (avant réduction de 50%).&#10;Plafond niches : 10 000 €.">i</i>
             </label>
             <input type="number" id="emploiDomicile" value="0" min="0">
-            <div class="niche-cell">
-              <span class="niche-marker niche-10k">NICHE 10k</span>
-            </div>
           </div>
 
           <div class="form-row">
             <label for="gardeEnfants">
               Frais de garde enfants &lt; 6 ans
-              <i class="tip" data-tip="CRÉDIT d'impôt (remboursable).&#10;&#10;Calcul : 50% des dépenses, plafond 3 500 € par enfant de moins de 6 ans.&#10;&#10;Saisir le montant total des dépenses (avant réduction de 50%).&#10;&#10;Dans le plafond des niches fiscales : 10 000 €.">i</i>
+              <i class="tip" data-tip="CRÉDIT d'impôt (remboursable).&#10;&#10;Calcul : 50% des dépenses, plafond 3 500 € par enfant.&#10;Saisir le montant total des dépenses (avant réduction de 50%).&#10;Plafond niches : 10 000 €.">i</i>
             </label>
             <input type="number" id="gardeEnfants" value="0" min="0">
-            <div class="niche-cell">
-              <span class="niche-marker niche-10k">NICHE 10k</span>
-            </div>
           </div>
 
           <div class="form-row">
             <label for="pinel">
               Investissement Pinel / Denormandie
-              <i class="tip" data-tip="RÉDUCTION d'impôt.&#10;&#10;Saisir le montant annuel de la réduction (indiqué sur l'avis d'imposition ou calculé selon le taux de l'engagement).&#10;&#10;Dans le plafond des niches fiscales : 10 000 €.">i</i>
+              <i class="tip" data-tip="RÉDUCTION d'impôt.&#10;&#10;Saisir le montant annuel de la réduction.&#10;Plafond niches : 10 000 €.">i</i>
             </label>
             <input type="number" id="pinel" value="0" min="0">
-            <div class="niche-cell">
-              <span class="niche-marker niche-10k">NICHE 10k</span>
-            </div>
           </div>
 
           <div class="form-row">
             <label for="girardinPD">
               Girardin plein droit
-              <i class="tip" data-tip="RÉDUCTION d'impôt (investissement outre-mer sans agrément).&#10;&#10;Saisir le montant de la RÉDUCTION figurant sur l'attestation fiscale remise par l'opérateur (pas le montant investi).&#10;&#10;Mécanisme niche : rétrocession 56% à l'entreprise locale → seuls 44% de la réduction comptent dans le plafond des 18 000 €.&#10;&#10;Art. 199 undecies B et 200-0 A, 4° du CGI.">i</i>
+              <i class="tip" data-tip="RÉDUCTION d'impôt (outre-mer sans agrément).&#10;&#10;Saisir le montant de la réduction (attestation fiscale).&#10;Seuls 44% comptent dans le plafond 18 000 €.&#10;Art. 199 undecies B et 200-0 A, 4° CGI.">i</i>
             </label>
             <input type="number" id="girardinPD" value="0" min="0">
-            <div class="niche-cell">
-              <span class="niche-marker niche-18k-44">NICHE 18k</span>
-              <span class="niche-marker niche-18k-44">× 44 %</span>
-            </div>
           </div>
 
           <div class="form-row">
             <label for="girardinAG">
               Girardin avec agrément
-              <i class="tip" data-tip="RÉDUCTION d'impôt (investissement outre-mer avec agrément ministériel).&#10;&#10;Saisir le montant de la RÉDUCTION figurant sur l'attestation fiscale.&#10;&#10;Mécanisme niche : rétrocession 66% à l'entreprise locale → seuls 34% de la réduction comptent dans le plafond des 18 000 €.&#10;&#10;Art. 199 undecies B et 200-0 A, 4° du CGI.">i</i>
+              <i class="tip" data-tip="RÉDUCTION d'impôt (outre-mer avec agrément ministériel).&#10;&#10;Saisir le montant de la réduction (attestation fiscale).&#10;Seuls 34% comptent dans le plafond 18 000 €.&#10;Art. 199 undecies B et 200-0 A, 4° CGI.">i</i>
             </label>
             <input type="number" id="girardinAG" value="0" min="0">
-            <div class="niche-cell">
-              <span class="niche-marker niche-18k-34">NICHE 18k</span>
-              <span class="niche-marker niche-18k-34">× 34 %</span>
-            </div>
           </div>
 
           <div class="form-row">
             <label for="fcpi">
               Souscription FCPI / FIP
-              <i class="tip" data-tip="RÉDUCTION d'impôt sur souscription de parts de fonds d'investissement (PME innovantes ou régionales).&#10;&#10;Saisir le montant de la réduction obtenue (pas le montant souscrit).&#10;&#10;Dans le plafond des niches fiscales : 10 000 €.">i</i>
+              <i class="tip" data-tip="RÉDUCTION d'impôt (PME innovantes ou régionales).&#10;&#10;Saisir le montant de la réduction obtenue.&#10;Plafond niches : 10 000 €.">i</i>
             </label>
             <input type="number" id="fcpi" value="0" min="0">
-            <div class="niche-cell">
-              <span class="niche-marker niche-10k">NICHE 10k</span>
-            </div>
           </div>
 
           <div class="form-row">
             <label for="sofica">
               Sofica
-              <i class="tip" data-tip="RÉDUCTION d'impôt sur souscription au capital d'une SOFICA (financement cinéma/audiovisuel).&#10;&#10;Saisir le montant de la réduction.&#10;&#10;Bénéficie du plafond majoré des niches : 18 000 €.">i</i>
+              <i class="tip" data-tip="RÉDUCTION d'impôt (financement cinéma / audiovisuel).&#10;&#10;Saisir le montant de la réduction.&#10;Plafond majoré : 18 000 €.">i</i>
             </label>
             <input type="number" id="sofica" value="0" min="0">
-            <div class="niche-cell">
-              <span class="niche-marker niche-18k">NICHE 18k</span>
-            </div>
           </div>
 
           <div class="form-row">
             <label for="autresReductions">Autres réductions d'impôt</label>
             <input type="number" id="autresReductions" value="0" min="0">
-            <div class="niche-cell">
-              <span class="niche-marker niche-10k">NICHE 10k</span>
-            </div>
           </div>
 
           <div class="form-row">
             <label for="autresCredits">Autres crédits d'impôt</label>
             <input type="number" id="autresCredits" value="0" min="0">
-            <div class="niche-cell">
-              <span class="niche-marker niche-10k">NICHE 10k</span>
-            </div>
           </div>
 
         </div>

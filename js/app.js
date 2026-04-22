@@ -215,6 +215,77 @@ function updateCalcDetaille(d) {
 }
 
 // ─────────────────────────────────────────────
+// INPUTS SIMULATEUR SIMPLIFIÉ
+// ─────────────────────────────────────────────
+function getInputsSimple() {
+  return {
+    // Situation
+    situation:    v('s-situation'),
+    nbEnfants:    v('s-nbEnfants'),
+    gardeAlternee: v('s-gardeAlternee'),
+    parentIsole:  v('s-parentIsole') === 'oui',
+
+    // Revenus — champs simplifiés
+    sal1:         v('s-sal'),
+    sal2:         0,
+    pen1:         0, pen2:           0,
+    bncMicro1:    v('s-bnc'),
+    bncMicro2:    0,
+    bncReel1:     0, bncReel2:       0,
+    microFoncier: 0, foncierReel:    0,
+    meubleClasse: 0, meubleNonClasse: 0,
+    dividendes:   v('s-dividendes'),
+    pv:           0,
+    autresRevenus: 0,
+    optionPFU:    v('s-optionPFU'),
+
+    // Charges
+    per:          v('s-per'),
+    pensionsAlim: v('s-pensionsAlim'),
+    csgDeductible: v('s-csg'),
+    autresCharges: 0,
+
+    // Réductions / Crédits
+    dons:            v('s-dons'),
+    emploiDomicile:  v('s-emploi'),
+    gardeEnfants:    v('s-garde'),
+    pinel:           v('s-pinel'),
+    girardinPD:      0, girardinAG:   0, fcpi:          0,
+    sofica:          v('s-sofica'),
+    autresReductions: 0,
+    autresCredits:    0,
+  };
+}
+
+// ─────────────────────────────────────────────
+// RÉSULTATS SIMULATEUR SIMPLIFIÉ
+// ─────────────────────────────────────────────
+function updateResultsSimple(d) {
+  const set = (id, val) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = val;
+  };
+
+  set('s-res-rni',          fmt(d.revenuNetImposable));
+  set('s-res-parts',        fmtParts(d.parts));
+  set('s-res-impot-brut',   fmt(d.impotBrut));
+  set('s-res-supp-qf',      fmt(d.supplementQF));
+  set('s-res-decote',       fmt(d.decote));
+  set('s-res-apres-decote', fmt(d.impotApresDecote));
+  set('s-res-ir-mob',       fmt(d.irMobilier));
+  set('s-res-ps',           fmt(d.totalPS));
+  // Réductions + crédits = avantages totaux appliqués
+  const avantages = d.reductionsAppliquees + d.creditsAppliques;
+  set('s-res-avantages',    avantages > 0 ? '−\u202F' + fmt(avantages) : fmt(0));
+  set('s-res-taux-moyen',   fmtPct(d.tauxMoyen));
+  set('s-res-tmi',          fmtPct(d.tmi));
+  set('s-parts-affichage',  fmtParts(d.parts) + ' parts');
+
+  const impotNetEl = document.getElementById('s-res-impot-net');
+  if (impotNetEl) impotNetEl.textContent = fmt(d.impotNet);
+}
+
+// ─────────────────────────────────────────────
 // CALCUL PRINCIPAL
 // ─────────────────────────────────────────────
 function recalculer() {
@@ -224,16 +295,25 @@ function recalculer() {
   updateCalcDetaille(det);
 }
 
+function recalculerSimple() {
+  const input = getInputsSimple();
+  const det = calculerIR(input);
+  updateResultsSimple(det);
+}
+
 // ─────────────────────────────────────────────
 // INITIALISATION
 // ─────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-  // Écouter tous les inputs
+  // Écouter tous les inputs — chaque champ déclenche son propre simulateur
   document.querySelectorAll('input[type="number"], select').forEach(el => {
-    el.addEventListener('input', recalculer);
-    el.addEventListener('change', recalculer);
+    const isSimple = el.id && el.id.startsWith('s-');
+    const handler = isSimple ? recalculerSimple : recalculer;
+    el.addEventListener('input',  handler);
+    el.addEventListener('change', handler);
   });
 
-  // Premier calcul
+  // Premiers calculs
   recalculer();
+  recalculerSimple();
 });

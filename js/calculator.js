@@ -133,14 +133,15 @@ function calculerIR(input) {
     : P.plafonds.perPlancher;
   det.per = Math.min(input.per, det.perCap);
 
-  // Pensions alimentaires — plafond enfants majeurs (art. 156-II CGI)
-  // Si nbBeneficiairesPA > 0 : cap à nbBeneficiairesPA × 6 674 €
-  // Si nbBeneficiairesPA = 0 : montant libre (ex-conjoint / ascendant, plafond judiciaire)
+  // Pensions alimentaires — plafond (art. 156-II CGI)
+  // Si nbBeneficiairesPA > 0 : cap à nbBeneficiairesPA × 6 674 € (enfants majeurs)
+  // Si nbBeneficiairesPA = 0 : ex-conjoint / ascendant — pas de cap légal fixe,
+  //   mais on plafonne au revenu brut global pour éviter un RNI négatif irréaliste
   const pensionCap = input.nbBeneficiairesPA > 0
     ? input.nbBeneficiairesPA * P.plafonds.pensionAlimEnfantMax
-    : Infinity;
+    : det.revenuBrutGlobal;   // fallback : impossible de déduire plus que son revenu
   det.pensionsAlim    = Math.min(input.pensionsAlim, pensionCap);
-  det.pensionAlimCap  = pensionCap === Infinity ? null : pensionCap;
+  det.pensionAlimCap  = pensionCap;
   det.csgDeductible = input.csgDeductible;
   det.autresCharges = input.autresCharges;
 
@@ -279,23 +280,9 @@ function calculerIR(input) {
     det.impotApresDecote + det.irMobilier - det.reductionsAppliquees
   ) - det.creditsAppliques + det.totalPS;
 
-  // ============================================================
-  // ÉTAPE 12 : CONTRIBUTION EXCEPTIONNELLE SUR LES HAUTS REVENUS (CEHR)
-  // Art. 223 sexies CGI — assiette : revenu fiscal de référence (proxy : revenuReference)
-  // ============================================================
-  const cehrSeuil1 = isCouple ? P.cehr.seuilCouple1 : P.cehr.seuilCelibataire1;
-  const cehrSeuil2 = isCouple ? P.cehr.seuilCouple2 : P.cehr.seuilCelibataire2;
-  det.cehr = 0;
-  if (det.revenuReference > cehrSeuil1) {
-    det.cehr += (Math.min(det.revenuReference, cehrSeuil2) - cehrSeuil1) * P.cehr.taux1;
-  }
-  if (det.revenuReference > cehrSeuil2) {
-    det.cehr += (det.revenuReference - cehrSeuil2) * P.cehr.taux2;
-  }
-  det.impotNet += det.cehr;
-
   // Revenu de référence = somme des revenus bruts déclarés (avant abattements) moins les charges
   // C'est ce que l'administration utilise pour calculer le taux moyen affiché
+  // ⚠ Doit être calculé AVANT la CEHR (étape 12) qui l'utilise comme assiette
   det.revenuReference = Math.max(0,
     input.sal1 + input.sal2
     + input.pen1 + input.pen2
@@ -311,6 +298,21 @@ function calculerIR(input) {
   det.tauxMoyen = det.revenuReference > 0
     ? det.impotNet / det.revenuReference
     : 0;
+
+  // ============================================================
+  // ÉTAPE 12 : CONTRIBUTION EXCEPTIONNELLE SUR LES HAUTS REVENUS (CEHR)
+  // Art. 223 sexies CGI — assiette : revenu fiscal de référence (proxy : revenuReference)
+  // ============================================================
+  const cehrSeuil1 = isCouple ? P.cehr.seuilCouple1 : P.cehr.seuilCelibataire1;
+  const cehrSeuil2 = isCouple ? P.cehr.seuilCouple2 : P.cehr.seuilCelibataire2;
+  det.cehr = 0;
+  if (det.revenuReference > cehrSeuil1) {
+    det.cehr += (Math.min(det.revenuReference, cehrSeuil2) - cehrSeuil1) * P.cehr.taux1;
+  }
+  if (det.revenuReference > cehrSeuil2) {
+    det.cehr += (det.revenuReference - cehrSeuil2) * P.cehr.taux2;
+  }
+  det.impotNet += det.cehr;
 
   // TMI : quand le plafonnement QF est actif (supplementQF > 0), le taux marginal
   // est déterminé par le QF de base (sans les demi-parts supplémentaires), car

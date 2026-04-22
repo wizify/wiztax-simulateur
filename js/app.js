@@ -286,6 +286,21 @@ function updateResultsSimple(d) {
 }
 
 // ─────────────────────────────────────────────
+// ACCORDÉON LEVIERS FISCAUX
+// ─────────────────────────────────────────────
+function toggleLevier(header) {
+  const body = header.nextElementSibling;
+  const isOpen = body.classList.contains('open');
+  // Ferme tous les autres
+  document.querySelectorAll('.levier-body.open').forEach(b => b.classList.remove('open'));
+  document.querySelectorAll('.levier-header.open').forEach(h => h.classList.remove('open'));
+  if (!isOpen) {
+    body.classList.add('open');
+    header.classList.add('open');
+  }
+}
+
+// ─────────────────────────────────────────────
 // CALCUL PRINCIPAL
 // ─────────────────────────────────────────────
 function recalculer() {

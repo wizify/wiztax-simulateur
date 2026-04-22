@@ -499,6 +499,177 @@ header span {
 }
 
 /* ─────────────────────────────────────────────
+   ONGLET LEVIERS FISCAUX
+───────────────────────────────────────────── */
+#leviers {
+  padding: 28px 40px;
+  max-width: 860px;
+}
+
+.leviers-legend {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+  padding: 14px 18px;
+  background: var(--surface-lowest);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-arch);
+}
+.leviers-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: .78rem;
+  color: var(--on-surface-variant);
+}
+
+.leviers-section-title {
+  font-family: var(--font-headline);
+  font-size: .88rem;
+  font-weight: 700;
+  letter-spacing: .2px;
+  margin: 28px 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.leviers-section-title:first-of-type { margin-top: 0; }
+
+/* Badges */
+.lbadge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 99px;
+  font-size: .70rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.lbadge-hors   { background: #E8F0FE; color: #1a3fa0; border: 1px solid #b0c4f8; }
+.lbadge-10k    { background: #E6F4EA; color: #1e6b35; border: 1px solid #9fd4ac; }
+.lbadge-18k    { background: #FEF3E2; color: #b45309; border: 1px solid #f8d89e; }
+.lbadge-deduct { background: var(--surface-container-low); color: var(--on-surface-variant); border: 1px solid var(--outline-variant); }
+
+/* Cards accordéon */
+.levier-card {
+  background: var(--surface-lowest);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-arch);
+  margin-bottom: 8px;
+  overflow: hidden;
+  border-top: 3px solid var(--accent);
+}
+.levier-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 20px;
+  cursor: pointer;
+  user-select: none;
+  transition: background .12s;
+}
+.levier-header:hover { background: var(--surface-container-low); }
+.levier-header-left { flex: 1; min-width: 0; }
+.levier-tag-type {
+  font-size: .68rem;
+  color: var(--outline);
+  margin-bottom: 2px;
+}
+.levier-title {
+  font-family: var(--font-headline);
+  font-weight: 700;
+  font-size: .90rem;
+  color: var(--on-surface);
+  line-height: 1.35;
+}
+.levier-badges {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  flex-shrink: 0;
+}
+.levier-arrow {
+  font-size: .85rem;
+  color: var(--outline);
+  transition: transform .25s;
+  flex-shrink: 0;
+}
+.levier-header.open .levier-arrow { transform: rotate(180deg); }
+
+.levier-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .35s ease;
+}
+.levier-body.open { max-height: 1200px; }
+.levier-body-inner { padding: 0 20px 20px; }
+
+/* Meta grid */
+.levier-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 7px;
+  margin: 12px 0;
+}
+.levier-meta-item {
+  background: var(--surface-container-low);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+}
+.levier-meta-label {
+  font-size: .67rem;
+  color: var(--outline);
+  text-transform: uppercase;
+  letter-spacing: .4px;
+  margin-bottom: 3px;
+}
+.levier-meta-value {
+  font-size: .83rem;
+  font-weight: 600;
+  color: var(--on-surface);
+  line-height: 1.3;
+}
+.levier-meta-value.lmv-good { color: #1e6b35; }
+.levier-meta-value.lmv-warn { color: var(--warning); }
+
+/* Desc blocks */
+.levier-desc {
+  margin-top: 12px;
+}
+.levier-desc-label {
+  font-size: .68rem;
+  text-transform: uppercase;
+  color: var(--outline);
+  letter-spacing: .4px;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+.levier-desc-text {
+  font-size: .855rem;
+  color: var(--on-surface-variant);
+  line-height: 1.65;
+}
+.levier-desc-text em {
+  font-style: normal;
+  color: var(--outline);
+  font-size: .82rem;
+}
+
+/* Footer sources */
+.leviers-footer {
+  margin-top: 24px;
+  padding: 14px 18px;
+  background: var(--surface-lowest);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-arch);
+  font-size: .78rem;
+  color: var(--on-surface-variant);
+  line-height: 1.65;
+  border-top: 3px solid #2E7D52;
+}
+
+/* ─────────────────────────────────────────────
    RESPONSIVE
 ───────────────────────────────────────────── */
 @media (max-width: 900px) {

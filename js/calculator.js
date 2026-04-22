@@ -122,8 +122,18 @@ function calculerIR(input) {
   // ============================================================
   // ÉTAPE 2 : REVENU NET IMPOSABLE
   // ============================================================
-  det.per = input.per;
-  det.pensionsAlim = input.pensionsAlim;
+
+  // PER — plafond = 10% des revenus professionnels, plancher 4 710 €, max 37 680 €
+  // On utilise les revenus N comme proxy des revenus N-1 (approximation raisonnable).
+  const revenuPro = input.sal1 + input.sal2
+    + input.bncMicro1 + input.bncMicro2
+    + input.bncReel1  + input.bncReel2;
+  det.perCap = revenuPro > 0
+    ? Math.max(P.plafonds.perPlancher, Math.min(revenuPro * P.plafonds.perTaux, P.plafonds.perMaxSalarie))
+    : P.plafonds.perPlancher;
+  det.per = Math.min(input.per, det.perCap);
+
+  det.pensionsAlim  = input.pensionsAlim;  // voir tooltip : 6 674 €/enfant adulte (art. 156-II)
   det.csgDeductible = input.csgDeductible;
   det.autresCharges = input.autresCharges;
 
@@ -190,9 +200,11 @@ function calculerIR(input) {
   // ============================================================
   // ÉTAPE 8 : RÉDUCTIONS D'IMPÔT
   // ============================================================
-  // Dons (HORS niche)
-  det.redDons = Math.min(input.dons, P.plafonds.dons75Plafond) * 0.75
-    + Math.max(0, input.dons - P.plafonds.dons75Plafond) * 0.66;
+  // Dons (HORS niche) — base plafonnée à 20% du RNI (art. 200 CGI)
+  // L'excédent est reportable 5 ans mais n'est pas simulé ici.
+  det.donsBase = Math.min(input.dons, det.revenuNetImposable * P.plafonds.donsPlafondRNI);
+  det.redDons = Math.min(det.donsBase, P.plafonds.dons75Plafond) * 0.75
+    + Math.max(0, det.donsBase - P.plafonds.dons75Plafond) * 0.66;
 
   // Réductions dans le plafond niches
   det.redPinel       = input.pinel;
@@ -209,7 +221,10 @@ function calculerIR(input) {
   // ÉTAPE 9 : CRÉDITS D'IMPÔT
   // ============================================================
   det.credDomicile = Math.min(input.emploiDomicile, P.plafonds.emploiDomMax) * P.plafonds.emploiDomTaux;
-  det.credGarde    = Math.min(input.gardeEnfants, P.plafonds.gardeEnfantsMax) * P.plafonds.gardeEnfantsTaux;
+  // Garde enfants : plafond de 3 500 € de dépenses PAR enfant < 6 ans
+  // On utilise nbEnfants comme approximation du nombre d'enfants éligibles
+  const gardeMax = P.plafonds.gardeEnfantsMax * Math.max(1, input.nbEnfants);
+  det.credGarde    = Math.min(input.gardeEnfants, gardeMax) * P.plafonds.gardeEnfantsTaux;
   det.credAutres   = input.autresCredits;
 
   det.totalCredits = det.credDomicile + det.credGarde + det.credAutres;

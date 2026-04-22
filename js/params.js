@@ -59,10 +59,26 @@ const PARAMS = {
 
   // --- PLAFONDS RÉDUCTIONS / CRÉDITS ---
   plafonds: {
-    dons75Plafond:        2000,
+    // Dons
+    dons75Plafond:        2000,    // seuil taux 75% (LF 2026 art. 28)
+    donsPlafondRNI:       0.20,    // base totale dons plafonnée à 20% du RNI (art. 200 CGI)
+
+    // PER — déduction plafonnée à 10% des revenus pro (art. 163 quatervicies CGI)
+    // Note : le plafond réglementaire se calcule sur les revenus N-1.
+    // Le simulateur utilise les revenus N comme approximation.
+    perTaux:              0.10,
+    perPlancher:          4710,    // 10% × PASS 2025 (47 100 €)
+    perMaxSalarie:        37680,   // 10% × 8 × PASS 2025
+
+    // Pensions alimentaires (art. 156-II CGI) — pas capé automatiquement
+    // car dépend du type de bénéficiaire (enfant adulte : 6 674 €/enfant ;
+    // ex-conjoint : montant judiciaire ; ascendants : besoins réels)
+    pensionAlimEnfantMax: 6674,    // plafond par enfant majeur (2025)
+
+    // Emploi à domicile & garde enfants
     emploiDomTaux:        0.50,
     emploiDomMax:         12000,
     gardeEnfantsTaux:     0.50,
-    gardeEnfantsMax:      3500,
+    gardeEnfantsMax:      3500,    // par enfant < 6 ans — multiplié par nbEnfants
   },
 };

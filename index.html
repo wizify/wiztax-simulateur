@@ -120,13 +120,15 @@
 
           <div class="form-row">
             <label for="s-per">Versements PER (part déductible)
-              <i class="tip" data-tip="Plan d'Épargne Retraite — versements volontaires déduits du revenu.&#10;Limite : 10% des revenus professionnels (plafond 35 194 € en 2025).">i</i>
+              <i class="tip" data-tip="Plan d'Épargne Retraite — versements volontaires déduits du revenu.&#10;&#10;⚙ Plafond calculé automatiquement :&#10;max(4 710 €, min(10% × revenus pro, 37 680 €))&#10;&#10;Non déductibles pour les plus de 70 ans (LF 2026).">i</i>
             </label>
             <input type="number" id="s-per" value="0" min="0">
           </div>
 
           <div class="form-row">
-            <label for="s-pensionsAlim">Pensions alimentaires versées</label>
+            <label for="s-pensionsAlim">Pensions alimentaires versées
+              <i class="tip" data-tip="Plafonds (à respecter à la saisie) :&#10;· Enfant majeur : 6 674 € par enfant&#10;· Ex-conjoint : montant judiciaire&#10;· Ascendant : besoins réels justifiés&#10;&#10;Le plafond n'est pas calculé automatiquement.">i</i>
+            </label>
             <input type="number" id="s-pensionsAlim" value="0" min="0">
           </div>
 
@@ -390,7 +392,7 @@
           <div class="form-row">
             <label for="per">
               Versements PER (part déductible)
-              <i class="tip" data-tip="Plan d'Épargne Retraite — versements volontaires.&#10;Déductibles dans la limite de 10% des revenus professionnels (plafond 2025 : 35 194 €).&#10;Non déductibles pour les plus de 70 ans.&#10;Saisir uniquement la part effectivement déduite.">i</i>
+              <i class="tip" data-tip="Plan d'Épargne Retraite — versements volontaires.&#10;&#10;⚙ Plafond calculé automatiquement :&#10;max(4 710 €, min(10% × revenus pro, 37 680 €))&#10;&#10;Le simulateur utilise les revenus N comme proxy des revenus N-1.&#10;Non déductibles pour les plus de 70 ans (LF 2026).">i</i>
             </label>
             <input type="number" id="per" value="0" min="0">
           </div>
@@ -398,7 +400,7 @@
           <div class="form-row">
             <label for="pensionsAlim">
               Pensions alimentaires versées
-              <i class="tip" data-tip="Pensions versées à un ex-conjoint ou à des enfants majeurs non rattachés.&#10;Déductibles dans la limite de 6 674 € par enfant (2025).">i</i>
+              <i class="tip" data-tip="Pensions versées à un ex-conjoint ou à des enfants majeurs non rattachés.&#10;&#10;Plafonds (à respecter à la saisie) :&#10;· Enfant majeur : 6 674 € par enfant (2025)&#10;· Ex-conjoint : montant judiciaire (pas de cap fixe)&#10;· Ascendant : montant justifié par les besoins réels&#10;&#10;Ces plafonds ne sont pas calculés automatiquement&#10;— saisir uniquement le montant déductible.">i</i>
             </label>
             <input type="number" id="pensionsAlim" value="0" min="0">
           </div>
@@ -778,12 +780,25 @@
   </div>
 
   <div class="param-card">
+    <h2>PER — plafond de déduction</h2>
+    <table class="param-table">
+      <tr><td class="pt-label">Taux (% des revenus professionnels N-1)</td><td class="pt-val">10 %</td></tr>
+      <tr><td class="pt-label">Plancher (10% × PASS 2025)</td><td class="pt-val">4 710 €</td></tr>
+      <tr><td class="pt-label">Plafond max salarié (10% × 8 × PASS 2025)</td><td class="pt-val">37 680 €</td></tr>
+      <tr><td class="pt-label">Pensions alimentaires — enfant majeur</td><td class="pt-val">6 674 € / enfant</td></tr>
+      <tr><td colspan="2" class="pt-source">Source : Art. 163 quatervicies CGI — Art. 156-II CGI — PASS 2025 : 47 100 €</td></tr>
+    </table>
+  </div>
+
+  <div class="param-card">
     <h2>Réductions et crédits spécifiques</h2>
     <table class="param-table">
       <tr><td class="pt-label">Dons — taux 1er palier (≤ 2 000 €)</td><td class="pt-val">75 %</td></tr>
       <tr><td class="pt-label">Dons — taux normal</td><td class="pt-val">66 %</td></tr>
+      <tr><td class="pt-label">Dons — plafond de la base</td><td class="pt-val">20 % du RNI</td></tr>
       <tr><td class="pt-label">Emploi à domicile — taux / plafond dépenses</td><td class="pt-val">50 % · 12 000 €</td></tr>
       <tr><td class="pt-label">Garde enfants — taux / plafond par enfant</td><td class="pt-val">50 % · 3 500 €</td></tr>
+      <tr><td colspan="2" class="pt-source">Source : Art. 200 CGI (dons) — Art. 199 sexdecies CGI (domicile) — LF 2026, art. 28</td></tr>
     </table>
   </div>
 

@@ -289,21 +289,23 @@ header span {
 
 /* Niche markers */
 .niche-marker {
-  font-size: .68rem;
-  font-weight: 700;
-  padding: 2px 6px;
+  font-size: .70rem;
+  font-weight: 500;
+  padding: 2px 7px;
   border-radius: 99px;
   display: inline-block;
   line-height: 1.6;
-  letter-spacing: .2px;
+  letter-spacing: 0;
+  white-space: nowrap;
 }
-.niche-10k    { color: var(--on-surface-variant); background: var(--surface-container); }
-.niche-18k    { color: #5a4600; background: #FFF8E0; }
-.niche-18k-44 { color: #5a4600; background: #FFF8E0; }
-.niche-18k-34 { color: #5a4600; background: #FFF8E0; }
-.niche-hors   { color: #7B1200; background: #FFE8E4; }
+.niche-10k    { color: var(--outline);   background: var(--surface-container-low); border: 1px solid var(--outline-variant); }
+.niche-18k    { color: #6B5000;          background: #FFF8E0;                       border: 1px solid #E8D58A; }
+.niche-18k-44 { color: #6B5000;          background: #FFF8E0;                       border: 1px solid #E8D58A; }
+.niche-18k-34 { color: #6B5000;          background: #FFF8E0;                       border: 1px solid #E8D58A; }
+.niche-hors   { color: #7B1200;          background: #FFE8E4;                       border: 1px solid #F5C4B8; }
+.niche-plaf   { color: var(--outline);   background: transparent;                   font-size: .67rem; font-weight: 400; padding: 0 2px; }
 
-.niche-cell { display: flex; flex-direction: column; gap: 3px; }
+.niche-cell { display: flex; flex-direction: column; gap: 3px; align-items: flex-start; }
 
 /* ─────────────────────────────────────────────
    PANNEAU RÉSULTATS
@@ -447,9 +449,13 @@ header span {
 
 /* ─────────────────────────────────────────────
    ONGLET PARAMÈTRES
+   Note : display:grid placé sur .active seulement pour ne pas écraser
+   le display:none de .tab-pane (spécificité ID > class)
 ───────────────────────────────────────────── */
 #parametres {
   padding: 28px 40px;
+}
+#parametres.active {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
   gap: 20px;

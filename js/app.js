@@ -53,10 +53,11 @@ function getInputs() {
     optionPFU:    document.getElementById('optionPFU').value,
 
     // Charges
-    per:          v('per'),
-    pensionsAlim: v('pensionsAlim'),
-    csgDeductible: v('csgDeductible'),
-    autresCharges: v('autresCharges'),
+    per:               v('per'),
+    pensionsAlim:      v('pensionsAlim'),
+    nbBeneficiairesPA: v('nbBeneficiairesPA'),
+    csgDeductible:     v('csgDeductible'),
+    autresCharges:     v('autresCharges'),
 
     // Réductions / Crédits
     dons:            v('dons'),
@@ -111,8 +112,11 @@ function updateResults(d) {
   set('res-apres-decote',fmt(d.impotApresDecote));
   set('res-ir-mob',      fmt(d.irMobilier));
   set('res-ps',          fmt(d.totalPS));
+  set('res-cehr',        fmt(d.cehr));
   set('res-reductions',  fmt(d.totalReductions));
   set('res-credits',     fmt(d.totalCredits));
+  // Plafond PER live (sous le champ de saisie)
+  set('per-cap-live',    fmt(d.perCap));
 
   // Niches : affichage "X € / Y €"
   const nichesEl = document.getElementById('res-niches');
@@ -151,8 +155,8 @@ function updateCalcDetaille(d) {
     ['cd-autrev',  'Autres revenus',                             d.autresRevenus,     ''],
     ['cd-rbg',     '▶ REVENU BRUT GLOBAL',                      d.revenuBrutGlobal,  'total'],
     // Étape 2
-    ['cd-per',     '− Versements PER',                           d.per,               ''],
-    ['cd-palim',   '− Pensions alimentaires',                    d.pensionsAlim,      ''],
+    ['cd-per',     '− Versements PER (déductible)',                d.per,               'Plafond : ' + fmt(d.perCap)],
+    ['cd-palim',   '− Pensions alimentaires',                    d.pensionsAlim,      d.pensionAlimCap ? 'Plafond : ' + fmt(d.pensionAlimCap) : 'Montant libre (pas de bénéficiaires déclarés)'],
     ['cd-csg',     '− CSG déductible',                           d.csgDeductible,     ''],
     ['cd-ach',     '− Autres charges',                           d.autresCharges,     ''],
     ['cd-rni',     '▶ REVENU NET IMPOSABLE',                     d.revenuNetImposable,'total'],
@@ -201,6 +205,7 @@ function updateCalcDetaille(d) {
     ['cd-rapp',    '− Réductions appliquées',                    d.reductionsAppliquees,'plafonnées à l\'impôt et aux niches'],
     ['cd-capp',    '− Crédits appliqués',                        d.creditsAppliques,  ''],
     ['cd-ps2',     '+ Prélèvements sociaux',                     d.totalPS,           ''],
+    ['cd-cehr2',   '+ CEHR (contribution hauts revenus)',         d.cehr,              d.cehr > 0 ? 'art. 223 sexies CGI' : '—'],
     ['cd-inet',    '▶ IMPÔT NET FINAL',                         d.impotNet,          'total'],
     ['cd-tm',      'Taux moyen d\'imposition',                   null,                fmtPct(d.tauxMoyen)],
     ['cd-tmi',     'Taux marginal (TMI)',                        null,                fmtPct(d.tmi)],
@@ -240,10 +245,11 @@ function getInputsSimple() {
     optionPFU:    v('s-optionPFU'),
 
     // Charges
-    per:          v('s-per'),
-    pensionsAlim: v('s-pensionsAlim'),
-    csgDeductible: v('s-csg'),
-    autresCharges: 0,
+    per:               v('s-per'),
+    pensionsAlim:      v('s-pensionsAlim'),
+    nbBeneficiairesPA: v('s-nbBeneficiairesPA'),
+    csgDeductible:     v('s-csg'),
+    autresCharges:     0,
 
     // Réductions / Crédits
     dons:            v('s-dons'),
@@ -274,6 +280,9 @@ function updateResultsSimple(d) {
   set('s-res-apres-decote', fmt(d.impotApresDecote));
   set('s-res-ir-mob',       fmt(d.irMobilier));
   set('s-res-ps',           fmt(d.totalPS));
+  set('s-res-cehr',         fmt(d.cehr));
+  // Plafond PER live
+  set('s-per-cap-live',     fmt(d.perCap));
   // Réductions + crédits = avantages totaux appliqués
   const avantages = d.reductionsAppliquees + d.creditsAppliques;
   set('s-res-avantages',    avantages > 0 ? '−\u202F' + fmt(avantages) : fmt(0));

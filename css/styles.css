@@ -307,6 +307,31 @@ header span {
 
 .niche-cell { display: flex; flex-direction: column; gap: 3px; align-items: flex-start; }
 
+/* Indicateur de plafond PER sous le champ de saisie */
+.per-cap-note {
+  grid-column: 1 / -1;
+  font-size: .75rem;
+  color: var(--outline);
+  padding: 2px 0 4px;
+  font-style: italic;
+}
+.per-cap-note strong {
+  color: var(--accent);
+  font-style: normal;
+}
+
+/* Carte "cadre temporel" dans l'onglet Paramètres */
+.param-card--scope {
+  background: #F0F4FF;
+  border-top-color: var(--accent);
+}
+.param-card--scope p {
+  font-size: .84rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 0;
+}
+
 /* ─────────────────────────────────────────────
    PANNEAU RÉSULTATS
 ───────────────────────────────────────────── */

@@ -123,13 +123,21 @@
               <i class="tip" data-tip="Plan d'Épargne Retraite — versements volontaires déduits du revenu.&#10;&#10;⚙ Plafond calculé automatiquement :&#10;max(4 710 €, min(10% × revenus pro, 37 680 €))&#10;&#10;Non déductibles pour les plus de 70 ans (LF 2026).">i</i>
             </label>
             <input type="number" id="s-per" value="0" min="0">
+            <div class="per-cap-note">Plafond déductible : <strong id="s-per-cap-live">—</strong></div>
           </div>
 
           <div class="form-row">
             <label for="s-pensionsAlim">Pensions alimentaires versées
-              <i class="tip" data-tip="Plafonds (à respecter à la saisie) :&#10;· Enfant majeur : 6 674 € par enfant&#10;· Ex-conjoint : montant judiciaire&#10;· Ascendant : besoins réels justifiés&#10;&#10;Le plafond n'est pas calculé automatiquement.">i</i>
+              <i class="tip" data-tip="Pensions à enfants majeurs, ex-conjoint ou ascendants.&#10;&#10;Plafonds légaux :&#10;· Enfant majeur : 6 674 €/enfant → déclarez le nombre ci-dessous&#10;· Ex-conjoint : montant judiciaire (cap désactivé si 0 bénéficiaire)&#10;· Ascendant : besoins réels justifiés (idem)">i</i>
             </label>
             <input type="number" id="s-pensionsAlim" value="0" min="0">
+          </div>
+
+          <div class="form-row">
+            <label for="s-nbBeneficiairesPA">↳ dont enfants majeurs bénéficiaires
+              <i class="tip tip-down" data-tip="Nombre d'enfants majeurs non rattachés à qui vous versez une pension.&#10;Le plafond de 6 674 €/enfant est alors appliqué automatiquement.&#10;Laisser à 0 pour une pension à ex-conjoint ou ascendant (pas de plafond fixe).">i</i>
+            </label>
+            <input type="number" id="s-nbBeneficiairesPA" value="0" min="0" step="1">
           </div>
 
           <div class="form-row">
@@ -201,6 +209,7 @@
         <div class="res-row separator"></div>
         <div class="res-row"><span class="res-label">IR mobilier (PFU)</span><span class="res-val" id="s-res-ir-mob">—</span></div>
         <div class="res-row"><span class="res-label">Prélèvements sociaux</span><span class="res-val" id="s-res-ps">—</span></div>
+        <div class="res-row"><span class="res-label">CEHR hauts revenus</span><span class="res-val" id="s-res-cehr">—</span></div>
         <div class="res-row"><span class="res-label">Réductions / crédits</span><span class="res-val" id="s-res-avantages">—</span></div>
         <div class="res-row separator"></div>
         <div class="res-row total-final">
@@ -395,14 +404,23 @@
               <i class="tip" data-tip="Plan d'Épargne Retraite — versements volontaires.&#10;&#10;⚙ Plafond calculé automatiquement :&#10;max(4 710 €, min(10% × revenus pro, 37 680 €))&#10;&#10;Le simulateur utilise les revenus N comme proxy des revenus N-1.&#10;Non déductibles pour les plus de 70 ans (LF 2026).">i</i>
             </label>
             <input type="number" id="per" value="0" min="0">
+            <div class="per-cap-note">Plafond déductible : <strong id="per-cap-live">—</strong></div>
           </div>
 
           <div class="form-row">
             <label for="pensionsAlim">
               Pensions alimentaires versées
-              <i class="tip" data-tip="Pensions versées à un ex-conjoint ou à des enfants majeurs non rattachés.&#10;&#10;Plafonds (à respecter à la saisie) :&#10;· Enfant majeur : 6 674 € par enfant (2025)&#10;· Ex-conjoint : montant judiciaire (pas de cap fixe)&#10;· Ascendant : montant justifié par les besoins réels&#10;&#10;Ces plafonds ne sont pas calculés automatiquement&#10;— saisir uniquement le montant déductible.">i</i>
+              <i class="tip" data-tip="Pensions à enfants majeurs, ex-conjoint ou ascendants.&#10;&#10;Plafonds légaux :&#10;· Enfant majeur : 6 674 €/enfant → déclarez le nombre ci-dessous&#10;· Ex-conjoint : montant judiciaire (cap désactivé si 0 bénéficiaire)&#10;· Ascendant : besoins réels justifiés (idem)">i</i>
             </label>
             <input type="number" id="pensionsAlim" value="0" min="0">
+          </div>
+
+          <div class="form-row">
+            <label for="nbBeneficiairesPA">
+              ↳ dont enfants majeurs bénéficiaires
+              <i class="tip tip-down" data-tip="Nombre d'enfants majeurs non rattachés à qui vous versez une pension.&#10;Le plafond de 6 674 €/enfant est alors appliqué automatiquement.&#10;Laisser à 0 pour une pension à ex-conjoint ou ascendant (pas de plafond fixe).">i</i>
+            </label>
+            <input type="number" id="nbBeneficiairesPA" value="0" min="0" step="1">
           </div>
 
           <div class="form-row">
@@ -557,6 +575,7 @@
         <div class="res-row separator"></div>
         <div class="res-row"><span class="res-label">IR mobilier (PFU)</span><span class="res-val" id="res-ir-mob">—</span></div>
         <div class="res-row"><span class="res-label">Prélèvements sociaux</span><span class="res-val" id="res-ps">—</span></div>
+        <div class="res-row"><span class="res-label">CEHR hauts revenus</span><span class="res-val" id="res-cehr">—</span></div>
         <div class="res-row separator"></div>
         <div class="res-row"><span class="res-label">Total réductions</span><span class="res-val" id="res-reductions">—</span></div>
         <div class="res-row"><span class="res-label">Total crédits</span><span class="res-val" id="res-credits">—</span></div>
@@ -696,7 +715,8 @@
       <tr><td class="td-label"><span class="td-label-inner">− Réductions appliquées <i class="tip" data-tip="Les réductions sont plafonnées :&#10;1. À l'impôt (pas de remboursement pour les réductions)&#10;2. Aux niches : si dépassement, les réductions dans les niches sont réduites proportionnellement&#10;&#10;Les dons (hors niches) sont préservés en priorité.">i</i></span></td><td class="td-val" id="cd-rapp-val">—</td></tr>
       <tr><td class="td-label"><span class="td-label-inner">− Crédits appliqués <i class="tip" data-tip="Les crédits sont aussi soumis au plafonnement des niches.&#10;Contrairement aux réductions, les crédits peuvent être remboursés s'ils dépassent l'impôt.">i</i></span></td><td class="td-val" id="cd-capp-val">—</td></tr>
       <tr><td class="td-label"><span class="td-label-inner">+ Prélèvements sociaux</span></td><td class="td-val" id="cd-ps2-val">—</td></tr>
-      <tr class="grand-total"><td class="td-label"><span class="td-label-inner">▶ IMPÔT NET FINAL <i class="tip" data-tip="Formule :&#10;max(0, impôt après décote + IR PFU − réductions appliquées) − crédits appliqués + prélèvements sociaux&#10;&#10;Peut être négatif si les crédits dépassent l'impôt (remboursement).">i</i></span></td><td class="td-val" id="cd-inet-val">—</td></tr>
+      <tr><td class="td-label"><span class="td-label-inner">+ CEHR <i class="tip" data-tip="Contribution exceptionnelle sur les hauts revenus (art. 223 sexies CGI).&#10;Assiette : revenu fiscal de référence.&#10;Célibataire : 3% de 250k à 500k€ · 4% au-delà&#10;Couple : 3% de 500k à 1M€ · 4% au-delà">i</i></span></td><td class="td-val" id="cd-cehr2-val">—</td></tr>
+      <tr class="grand-total"><td class="td-label"><span class="td-label-inner">▶ IMPÔT NET FINAL <i class="tip" data-tip="Formule :&#10;max(0, impôt après décote + IR PFU − réductions appliquées) − crédits appliqués + prélèvements sociaux + CEHR&#10;&#10;Peut être négatif si les crédits dépassent l'impôt (remboursement).">i</i></span></td><td class="td-val" id="cd-inet-val">—</td></tr>
       <tr><td class="td-label"><span class="td-label-inner">Taux moyen d'imposition</span></td><td class="td-val" id="cd-tm-val">—</td></tr>
       <tr><td class="td-label"><span class="td-label-inner">Taux marginal (TMI)</span></td><td class="td-val" id="cd-tmi-val">—</td></tr>
     </table>
@@ -800,6 +820,24 @@
       <tr><td class="pt-label">Garde enfants — taux / plafond par enfant</td><td class="pt-val">50 % · 3 500 €</td></tr>
       <tr><td colspan="2" class="pt-source">Source : Art. 200 CGI (dons) — Art. 199 sexdecies CGI (domicile) — LF 2026, art. 28</td></tr>
     </table>
+  </div>
+
+  <div class="param-card">
+    <h2>CEHR — Contribution exceptionnelle hauts revenus</h2>
+    <table class="param-table">
+      <tr><td class="pt-label">Célibataire · tranche 3% (250 k – 500 k€)</td><td class="pt-val">3 %</td></tr>
+      <tr><td class="pt-label">Célibataire · tranche 4% (> 500 k€)</td><td class="pt-val">4 %</td></tr>
+      <tr><td class="pt-label">Couple · tranche 3% (500 k – 1 M€)</td><td class="pt-val">3 %</td></tr>
+      <tr><td class="pt-label">Couple · tranche 4% (> 1 M€)</td><td class="pt-val">4 %</td></tr>
+      <tr><td class="pt-label">Assiette</td><td class="pt-val">Revenu fiscal de référence</td></tr>
+      <tr><td colspan="2" class="pt-source">Source : Art. 223 sexies CGI — prorogée LF 2026</td></tr>
+    </table>
+  </div>
+
+  <div class="param-card param-card--scope">
+    <h2>Cadre temporel de ce simulateur</h2>
+    <p>Ce simulateur couvre les <strong>revenus 2025</strong> à déclarer en mai-juin 2026, avec les paramètres de la <strong>Loi de Finances 2026</strong> (barème publié le 07/04/2026, PS 18,6 % LFSS 2026).</p>
+    <p style="margin-top:0.6rem">Pour les investissements défiscalisant réalisés en 2026 (Girardin, Pinel…), leur impact s'appliquera sur la <strong>déclaration 2027</strong> (revenus 2026). Le barème 2026 ne sera connu qu'à la publication de la LF 2027 (~décembre 2026) — ce simulateur ne peut pas encore le couvrir.</p>
   </div>
 
 </div>

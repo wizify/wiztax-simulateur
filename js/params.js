@@ -81,4 +81,15 @@ const PARAMS = {
     gardeEnfantsTaux:     0.50,
     gardeEnfantsMax:      3500,    // par enfant < 6 ans — multiplié par nbEnfants
   },
+
+  // --- CONTRIBUTION EXCEPTIONNELLE SUR LES HAUTS REVENUS (art. 223 sexies CGI) ---
+  // Assiette : revenu fiscal de référence (proxy : revenuReference du simulateur)
+  cehr: {
+    seuilCelibataire1:  250000,   // célibataire/divorcé/veuf : tranche 3%
+    seuilCelibataire2:  500000,   // célibataire/divorcé/veuf : tranche 4%
+    seuilCouple1:       500000,   // marié/pacsé : tranche 3%
+    seuilCouple2:      1000000,   // marié/pacsé : tranche 4%
+    taux1: 0.03,
+    taux2: 0.04,
+  },
 };

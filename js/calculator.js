@@ -133,7 +133,14 @@ function calculerIR(input) {
     : P.plafonds.perPlancher;
   det.per = Math.min(input.per, det.perCap);
 
-  det.pensionsAlim  = input.pensionsAlim;  // voir tooltip : 6 674 €/enfant adulte (art. 156-II)
+  // Pensions alimentaires — plafond enfants majeurs (art. 156-II CGI)
+  // Si nbBeneficiairesPA > 0 : cap à nbBeneficiairesPA × 6 674 €
+  // Si nbBeneficiairesPA = 0 : montant libre (ex-conjoint / ascendant, plafond judiciaire)
+  const pensionCap = input.nbBeneficiairesPA > 0
+    ? input.nbBeneficiairesPA * P.plafonds.pensionAlimEnfantMax
+    : Infinity;
+  det.pensionsAlim    = Math.min(input.pensionsAlim, pensionCap);
+  det.pensionAlimCap  = pensionCap === Infinity ? null : pensionCap;
   det.csgDeductible = input.csgDeductible;
   det.autresCharges = input.autresCharges;
 
@@ -243,7 +250,7 @@ function calculerIR(input) {
   det.depassementNiches = Math.max(0, det.nichesUtilisees - det.plafondNiches);
 
   // ============================================================
-  // ÉTAPE 11 : IMPÔT NET FINAL
+  // ÉTAPE 11 : IMPÔT NET FINAL (hors CEHR)
   // ============================================================
   // Application des réductions avec plafonnement niches
   const reductionsDansNiches = det.totalReductions - det.redDons;
@@ -271,6 +278,21 @@ function calculerIR(input) {
   det.impotNet = Math.max(0,
     det.impotApresDecote + det.irMobilier - det.reductionsAppliquees
   ) - det.creditsAppliques + det.totalPS;
+
+  // ============================================================
+  // ÉTAPE 12 : CONTRIBUTION EXCEPTIONNELLE SUR LES HAUTS REVENUS (CEHR)
+  // Art. 223 sexies CGI — assiette : revenu fiscal de référence (proxy : revenuReference)
+  // ============================================================
+  const cehrSeuil1 = isCouple ? P.cehr.seuilCouple1 : P.cehr.seuilCelibataire1;
+  const cehrSeuil2 = isCouple ? P.cehr.seuilCouple2 : P.cehr.seuilCelibataire2;
+  det.cehr = 0;
+  if (det.revenuReference > cehrSeuil1) {
+    det.cehr += (Math.min(det.revenuReference, cehrSeuil2) - cehrSeuil1) * P.cehr.taux1;
+  }
+  if (det.revenuReference > cehrSeuil2) {
+    det.cehr += (det.revenuReference - cehrSeuil2) * P.cehr.taux2;
+  }
+  det.impotNet += det.cehr;
 
   // Revenu de référence = somme des revenus bruts déclarés (avant abattements) moins les charges
   // C'est ce que l'administration utilise pour calculer le taux moyen affiché
